@@ -12,7 +12,8 @@
         "mongojs": "0.9.x"
     },
     "devDependencies": {
-        "mocha": "1.16.x"
+        "mocha": "1.16.x",
+        "sinon": "1.7.x"
     },
     "engines": {
         "node": "0.10.24"

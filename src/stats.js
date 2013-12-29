@@ -7,11 +7,33 @@ var db = require('./db');
 var stats = {};
 
 stats._map = function () {
-    // TODO
-    emit(5000, {"metalStored": [759]});
-    emit(5000, {"metalStored": [720]});
-    emit(5000, {"metalStored": [654]});
-    emit(5000, {"metalStored": [688]});
+
+    function convert(entry) {
+        var result = {};
+        for (var property in entry) {
+            if (entry.hasOwnProperty(property) && property !== 'timepoint') {
+                result[property] = [ entry[property] ];
+            }
+        }
+        return result;
+    }
+
+    function roundByMultiple(n, multiple) {
+        return Math.round(n / multiple) * multiple
+    }
+
+    var playerTimeData = this.playerTimeData;
+    for (var playerId in  playerTimeData) {
+        if (playerTimeData.hasOwnProperty(playerId)) {
+            var entries = playerTimeData[playerId];
+            var startTime = null;
+            entries.forEach(function (entry) {
+                startTime = startTime || entry.timepoint;
+                var relativeTime = entry.timepoint - startTime;
+                emit(roundByMultiple(relativeTime, 5000), convert(entry));
+            })
+        }
+    }
 };
 
 stats._reduce = function (key, values) {

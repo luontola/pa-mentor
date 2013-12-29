@@ -40,10 +40,10 @@ describe('Games:', function () {
                 games.save({gameId: 10, someField: "second version"}, done);
             });
         });
-        it('saves only one copy', function (done) {
+        it('Saves only one copy', function (done) {
             assertCount(1, db.games, done);
         });
-        it('updates the persisted entity', function (done) {
+        it('Updates the persisted entity', function (done) {
             db.games.findOne({gameId: 10}, function (err, game) {
                 assert.ifError(err);
                 assert.equal("second version", game.someField);

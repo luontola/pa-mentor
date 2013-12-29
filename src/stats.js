@@ -56,7 +56,10 @@ stats._reduce = function (key, values) {
 
     function calculatePercentiles(values) {
         values.sort();
-        var percentiles = [25, 50, 75, 100]; // TODO
+        var percentiles = [];
+        for (var i = 0; i < values.length; i++) {
+            percentiles.push(Math.round(100 / (values.length / (i + 1))));
+        }
         return {
             values: values,
             percentiles: percentiles
@@ -77,9 +80,7 @@ stats.refreshAndGet = function (timepoint, callback) {
     db.games.mapReduce(
             stats._map,
             stats._reduce,
-            {
-                out: 'stats'
-            },
+            { out: 'stats' },
             function (err) {
                 if (err) {
                     callback(err);

@@ -72,4 +72,48 @@ describe('Stats', function () {
             assert.deepEqual([10000, {stat1: [3], stat2: [30]}], emit.getCall(2).args);
         });
     });
+
+    describe("#_reduce()", function () {
+
+        it("Sorts the values and calculates their percentiles", function () {
+            var entries = [
+                {stat1: [1], stat2: [10]},
+                {stat1: [4], stat2: [20]},
+                {stat1: [3], stat2: [17]},
+                {stat1: [2], stat2: [15]}
+            ];
+
+            var results = stats._reduce(5000, entries);
+
+            assert.deepEqual({
+                timepoint: 5000,
+                stat1: {
+                    values: [1, 2, 3, 4],
+                    percentiles: [25, 50, 75, 100]
+                },
+                stat2: {
+                    values: [10, 15, 17, 20],
+                    percentiles: [25, 50, 75, 100]
+                }
+            }, results);
+        });
+
+        it("Percentiles are always full percentages", function () {
+            var entries = [
+                {stat: [10]},
+                {stat: [20]},
+                {stat: [30]}
+            ];
+
+            var results = stats._reduce(5000, entries);
+
+            assert.deepEqual({
+                timepoint: 5000,
+                stat: {
+                    values: [10, 20, 30],
+                    percentiles: [33, 67, 100]
+                }
+            }, results);
+        });
+    });
 });

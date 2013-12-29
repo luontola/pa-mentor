@@ -115,5 +115,17 @@ describe('Stats', function () {
                 }
             }, results);
         });
+
+        it("Sorting uses numeric sort, not lexical sort", function () {
+            var entries = [
+                {stat: [1]},
+                {stat: [10]},
+                {stat: [2]}
+            ];
+
+            var results = stats._reduce(0, entries);
+
+            assert.deepEqual([1, 2, 10], results.stat.values);
+        });
     });
 });

@@ -54,8 +54,12 @@ stats._reduce = function (key, values) {
         return merged;
     }
 
+    function compareNumbers(a, b) {
+        return a - b;
+    }
+
     function calculatePercentiles(values) {
-        values.sort();
+        values.sort(compareNumbers);
         var percentiles = [];
         for (var i = 0; i < values.length; i++) {
             percentiles.push(Math.round(100 / (values.length / (i + 1))));

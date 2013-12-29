@@ -17,7 +17,7 @@ function assertCount(expectedCount, collection, done) {
 
 describe('Games:', function () {
     beforeEach(function (done) {
-        db.games.remove(done);
+        db.removeAll(done);
     });
 
     it('Saves a game to database', function (done) {

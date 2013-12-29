@@ -4,7 +4,7 @@
 
 var mongojs = require('mongojs');
 
-var db = mongojs('mongodb://localhost:27017/paMentorTest', ['games', 'stats']);
+var db = mongojs('mongodb://localhost:27017/paMentorTest', ['games', 'percentiles']);
 
 db.games.ensureIndex({ gameId: 1 }, { unique: true }, function (err) {
     if (err) {
@@ -12,10 +12,21 @@ db.games.ensureIndex({ gameId: 1 }, { unique: true }, function (err) {
     }
 });
 
-db.stats.ensureIndex({'value.timepoint': 1}, { unique: true }, function (err) {
+db.percentiles.ensureIndex({'value.timepoint': 1}, { unique: true }, function (err) {
     if (err) {
         throw err;
     }
 });
+
+db.removeAll = function (done) {
+    db.games.remove(function () {
+        db.percentiles.remove(done);
+    });
+};
+
+mongojs.Collection.prototype.name = function () {
+    var fullName = this._name;
+    return fullName.substring(fullName.lastIndexOf('.') + 1);
+};
 
 module.exports = db;

@@ -92,11 +92,11 @@ stats._reduce = function (key, values) {
 };
 
 stats.refresh = function (callback) {
-    db.games.mapReduce(stats._map, stats._reduce, { out: 'stats' }, callback);
+    db.games.mapReduce(stats._map, stats._reduce, { out: db.percentiles.name() }, callback);
 };
 
 stats.at = function (timepoint, callback) {
-    db.stats.findOne({ 'value.timepoint': timepoint }, function (err, doc) {
+    db.percentiles.findOne({ 'value.timepoint': timepoint }, function (err, doc) {
         if (err) {
             callback(err);
         } else {

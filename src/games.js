@@ -6,18 +6,17 @@ var assert = require('assert');
 var rest = require('./rest');
 var db = require('./db');
 
-exports.updateGame = function (url, callback) {
-    rest.getObject(url, function (game) {
-        //console.log(game);
-        db.games.findOne({ gameId: game.gameId }, function (err, old) {
-            assert.equal(null, err);
-            if (old) {
-                game._id = old._id;
-            }
-            db.games.save(game, {w: 1}, function (err, result) {
-                assert.equal(null, err);
-                callback(game);
-            });
-        })
-    });
+exports.save = function (game, callback) {
+    var gameId = game.gameId;
+    assert.ok(gameId);
+    db.games.findOne({ gameId: gameId }, function (err, old) {
+        if (err) {
+            callback(err);
+            return;
+        }
+        if (old) {
+            game._id = old._id;
+        }
+        db.games.save(game, {w: 1}, callback);
+    })
 };

@@ -76,19 +76,8 @@ stats._reduce = function (key, values) {
     return result;
 };
 
-stats.refreshAndGet = function (timepoint, callback) {
-    db.games.mapReduce(
-            stats._map,
-            stats._reduce,
-            { out: 'stats' },
-            function (err) {
-                if (err) {
-                    callback(err);
-                } else {
-                    stats.at(timepoint, callback);
-                }
-            }
-    );
+stats.refresh = function (callback) {
+    db.games.mapReduce(stats._map, stats._reduce, { out: 'stats' }, callback);
 };
 
 stats.at = function (timepoint, callback) {
@@ -97,6 +86,16 @@ stats.at = function (timepoint, callback) {
             callback(err);
         } else {
             callback(null, doc.value);
+        }
+    });
+};
+
+stats.refreshAndGet = function (timepoint, callback) {
+    stats.refresh(function (err) {
+        if (err) {
+            callback(err);
+        } else {
+            stats.at(timepoint, callback);
         }
     });
 };

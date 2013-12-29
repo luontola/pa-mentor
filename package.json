@@ -1,0 +1,25 @@
+{
+    "name": "pa-mentor",
+    "description": "Planetary Annihilation mod showing how your stats compare to others",
+    "author": "Esko Luontola <esko.luontola@gmail.com>",
+    "homepage": "https://github.com/orfjackal/pa-mentor",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/orfjackal/pa-mentor.git"
+    },
+
+    "dependencies": {
+        "mongojs": "0.9.x"
+    },
+    "devDependencies": {
+        "mocha": "1.16.x"
+    },
+    "engines": {
+        "node": "0.10.24"
+    },
+
+    "scripts": {
+        "test": "node node_modules/mocha/bin/mocha --reporter spec",
+        "autotest": "node node_modules/mocha/bin/mocha --watch"
+    }
+}

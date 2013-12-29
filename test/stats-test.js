@@ -127,5 +127,38 @@ describe('Stats', function () {
 
             assert.deepEqual([1, 2, 10], results.stat.values);
         });
+
+        it("Combines repeated values into one", function () {
+            var entries = [
+                {stat: [1]},
+                {stat: [1]},
+                {stat: [1]},
+                {stat: [2]}
+            ];
+
+            var results = stats._reduce(0, entries);
+
+            assert.deepEqual({
+                timepoint: 0,
+                stat: {
+                    values: [1, 2],
+                    percentiles: [75, 100]
+                }
+            }, results);
+        });
+
+        it("Combines repeated percentiles into one", function () {
+            var entries = [];
+            for (var i = 1; i <= 200; i++) {
+                entries.push({stat: [10 * i]}); // two values for each percentile
+            }
+
+            var results = stats._reduce(0, entries);
+
+            assert.deepEqual([1, 2, 3, 4, 5], results.stat.percentiles.slice(0, 5));
+            assert.deepEqual([20, 40, 60, 80, 100], results.stat.values.slice(0, 5));
+            assert.deepEqual([96, 97, 98, 99, 100], results.stat.percentiles.slice(95, 100));
+            assert.deepEqual([1920, 1940, 1960, 1980, 2000], results.stat.values.slice(95, 100));
+        });
     });
 });

@@ -58,12 +58,23 @@ stats._reduce = function (key, values) {
         return a - b;
     }
 
+    function deduplicate(values, percentiles) {
+        for (var i = 0; i < values.length - 1; i++) {
+            if (values[i] === values[i + 1] || percentiles[i] === percentiles[i + 1]) {
+                values.splice(i, 1);
+                percentiles.splice(i, 1);
+                i--;
+            }
+        }
+    }
+
     function calculatePercentiles(values) {
         values.sort(compareNumbers);
         var percentiles = [];
         for (var i = 0; i < values.length; i++) {
-            percentiles.push(Math.round(100 / (values.length / (i + 1))));
+            percentiles.push(Math.round(100 * (i + 1) / values.length)); // "a*c/b" instead of "a/(b/c)" produces more accurate fractions
         }
+        deduplicate(values, percentiles);
         return {
             values: values,
             percentiles: percentiles

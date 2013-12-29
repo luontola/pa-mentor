@@ -51,8 +51,7 @@ describe('Games:', function () {
         })
     });
 
-    // TODO
-    it.skip('Calculates percentiles of player stats', function (done) {
+    it('Calculates percentiles of player stats', function (done) {
         var game = {
             "gameId": 11919,
             "playerTimeData": {
@@ -89,8 +88,9 @@ describe('Games:', function () {
 
             games.statsAt(5000, function (err, stats) {
                 assert.ifError(err);
-                assert.equal([654, 688, 720, 759], stats.metalStored.values);
-                assert.equal([25, 50, 75, 100], stats.metalStored.percentiles);
+                assert.deepEqual([654, 688, 720, 759], stats.metalStored.values);
+                assert.deepEqual([25, 50, 75, 100], stats.metalStored.percentiles);
+                done();
             })
         })
     });

@@ -22,12 +22,62 @@ exports.save = function (game, callback) {
 };
 
 exports.statsAt = function (timepoint, callback) {
-    // TODO
-    var stats = {
-        metalStored: {
-            values: [1, 2, 3, 4],
-            percentiles: [5, 6, 7, 8]
-        }
-    };
-    callback(null, stats);
+
+    db.games.mapReduce(
+            function () {
+                // TODO
+                emit(5000, {"metalStored": [759]});
+                emit(5000, {"metalStored": [720]});
+                emit(5000, {"metalStored": [654]});
+                emit(5000, {"metalStored": [688]});
+            },
+            function (key, values) {
+                var combined = {};
+
+                for (var i = 0; i < values.length; i++) {
+                    var entry = values[i];
+                    for (var property in entry) {
+                        if (!entry.hasOwnProperty(property)) {
+                            continue;
+                        }
+                        var list = combined[property] = (combined[property] || []);
+                        entry[property].forEach(function (value) {
+                            list.push(value);
+                        });
+                    }
+                }
+
+                for (var property in combined) {
+                    if (!combined.hasOwnProperty(property)) {
+                        continue;
+                    }
+                    var values = combined[property];
+                    values.sort();
+                    var percentiles = [25, 50, 75, 100]; // TODO
+                    combined[property] = {
+                        values: values,
+                        percentiles: percentiles
+                    };
+                }
+                combined.timepoint = key;
+
+                return combined;
+            },
+            {
+                out: 'stats'
+            },
+            function (err, outColl) {
+                if (err) {
+                    callback(err);
+                    return;
+                }
+                outColl.findOne({}, function (err, doc) {
+                    if (err) {
+                        callback(err);
+                    } else {
+                        callback(null, doc.value);
+                    }
+                });
+            }
+    );
 };

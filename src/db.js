@@ -5,7 +5,7 @@
 var assert = require('assert');
 var mongojs = require('mongojs');
 
-var db = mongojs('mongodb://localhost:27017/paMentorTest', ['games']);
+var db = mongojs('mongodb://localhost:27017/paMentorTest', ['games', 'stats']);
 
 db.games.ensureIndex({ gameId: 1 }, { unique: true }, function (err) {
     if (err) {

@@ -5,6 +5,7 @@
 var assert = require('assert');
 var db = require('../src/db');
 var games = require('../src/games');
+var stats = require('../src/stats');
 
 function assertCount(expectedCount, collection, done) {
     collection.count(function (err, actualCount) {
@@ -86,7 +87,7 @@ describe('Games:', function () {
 
         games.save(game, function () {
 
-            games.statsAt(5000, function (err, stats) {
+            stats.refreshAndGet(5000, function (err, stats) {
                 assert.ifError(err);
                 assert.deepEqual([654, 688, 720, 759], stats.metalStored.values);
                 assert.deepEqual([25, 50, 75, 100], stats.metalStored.percentiles);

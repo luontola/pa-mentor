@@ -21,6 +21,7 @@ exports.save = function (game, callback) {
     })
 };
 
+
 exports.statsAt = function (timepoint, callback) {
 
     db.games.mapReduce(
@@ -32,36 +33,40 @@ exports.statsAt = function (timepoint, callback) {
                 emit(5000, {"metalStored": [688]});
             },
             function (key, values) {
-                var combined = {};
 
-                for (var i = 0; i < values.length; i++) {
-                    var entry = values[i];
-                    for (var property in entry) {
-                        if (!entry.hasOwnProperty(property)) {
-                            continue;
+                function mergeProperties(entries) {
+                    var merged = {};
+                    for (var i = 0; i < entries.length; i++) {
+                        var entry = entries[i];
+                        for (var property in entry) {
+                            if (entry.hasOwnProperty(property)) {
+                                var list = merged[property] = (merged[property] || []);
+                                entry[property].forEach(function (value) {
+                                    list.push(value);
+                                });
+                            }
                         }
-                        var list = combined[property] = (combined[property] || []);
-                        entry[property].forEach(function (value) {
-                            list.push(value);
-                        });
                     }
+                    return merged;
                 }
 
-                for (var property in combined) {
-                    if (!combined.hasOwnProperty(property)) {
-                        continue;
-                    }
-                    var values = combined[property];
+                function calculatePercentiles(values) {
                     values.sort();
                     var percentiles = [25, 50, 75, 100]; // TODO
-                    combined[property] = {
+                    return {
                         values: values,
                         percentiles: percentiles
                     };
                 }
-                combined.timepoint = key;
 
-                return combined;
+                var result = mergeProperties(values);
+                for (var property in result) {
+                    if (result.hasOwnProperty(property)) {
+                        result[property] = calculatePercentiles(result[property]);
+                    }
+                }
+                result.timepoint = key;
+                return result;
             },
             {
                 out: 'stats'

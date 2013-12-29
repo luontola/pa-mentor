@@ -20,3 +20,14 @@ exports.save = function (game, callback) {
         db.games.save(game, {w: 1}, callback);
     })
 };
+
+exports.statsAt = function (timepoint, callback) {
+    // TODO
+    var stats = {
+        metalStored: {
+            values: [1, 2, 3, 4],
+            percentiles: [5, 6, 7, 8]
+        }
+    };
+    callback(null, stats);
+};

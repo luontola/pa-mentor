@@ -22,12 +22,22 @@ $(function () {
         var diff = now - pamentor.timesyncWallTime();
         return diff + pamentor.timesyncGameTime();
     };
+    pamentor.updateClock = function () {
+        pamentor.timeSincePlayStart(pamentor._timeSincePlayStart());
+    };
+
     pamentor.stats = ko.observable({});
+    pamentor.statsServer = 'http://127.0.0.1:8080'; // TODO: change to the production URL when done
+    pamentor.updateStats = function () {
+        $.getJSON(pamentor.statsServer + '/api/stats/' + pamentor.timeSincePlayStart(), function (stats) {
+            pamentor.stats(stats);
+        });
+    };
 
     function findPercentile(name) {
         var stats = pamentor.stats()[name];
         if (!stats) {
-            return 0;
+            return '?';
         }
         var myValue = pamentor[name].value();
         var myPercentile = 0;
@@ -49,17 +59,8 @@ $(function () {
     };
 
     model.pamentor = pamentor;
-
-    setInterval(function () {
-        pamentor.timeSincePlayStart(pamentor._timeSincePlayStart());
-    }, 1000);
-
-    setInterval(function () {
-        var host = 'http://127.0.0.1:8080'; // TODO: change to the production URL when done
-        $.getJSON(host + '/api/stats/' + pamentor.timeSincePlayStart(), function (stats) {
-            pamentor.stats(stats);
-        });
-    }, 5000);
+    setInterval(pamentor.updateClock, 1000);
+    setInterval(pamentor.updateStats, 5000);
 
     createFloatingFrame('pa_mentor_frame', 100, 100, {'offset': 'leftCenter', 'left': 0});
     loadTemplate($('#pa_mentor_frame_content'), 'coui://ui/mods/PAMentor/live_game/pa_mentor.html');

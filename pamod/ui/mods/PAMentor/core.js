@@ -32,29 +32,31 @@ pamentor = (function () {
         });
     };
 
-    function findPercentile(name) {
-        var stats = pamentor.stats()[name];
+    function findPercentile(value, stats) {
         if (!stats) {
             return '?';
         }
-        var myValue = pamentor[name].value();
         var myPercentile = 0;
         for (var i = 0; i < stats.values.length; i++) {
-            if (stats.values[i] < myValue) {
+            if (stats.values[i] < value) {
                 myPercentile = stats.percentiles[i];
             }
         }
         return myPercentile;
     }
 
-    pamentor.armyCount = {
-        value: ko.computed(function () {
-            return model.armySize();
-        }),
-        percentile: ko.computed(function () {
-            return findPercentile('armyCount');
-        })
-    };
+    function createStat(name, valueFn) {
+        var value = ko.computed(valueFn);
+        var percentile = ko.computed(function () {
+            return findPercentile(value(), pamentor.stats()[name]);
+        });
+        pamentor[name] = {
+            value: value,
+            percentile: percentile
+        };
+    }
+
+    createStat('armyCount', model.armySize);
 
     return pamentor;
 })();

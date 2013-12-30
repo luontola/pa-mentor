@@ -108,6 +108,8 @@ analytics.at = function (timepoint, callback) {
             .next(function (err, doc) {
                 if (err) {
                     callback(err);
+                } else if (!doc) {
+                    callback(new Error("No data found at timepoint " + timepoint));
                 } else {
                     callback(null, doc.value);
                 }

@@ -280,5 +280,15 @@ describe('Analytics:', function () {
                 done();
             });
         });
+
+        it("Gives an error if there is no data", function (done) {
+            db.removeAll(function () {
+                analytics.at(0, function (err, data) {
+                    assert.ok(err instanceof Error);
+                    assert.equal(null, data);
+                    done();
+                });
+            });
+        });
     });
 });

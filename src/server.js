@@ -5,8 +5,7 @@
 var http = require('http');
 var express = require('express');
 var _ = require('underscore');
-
-var server = express();
+var analytics = require('./analytics');
 
 function getFunctionDocs(fn) {
     var code = fn.toString();
@@ -33,6 +32,8 @@ function getApiDocs() {
             .value();
 }
 
+var server = express();
+
 server.get('/', function (req, res) {
     res.setHeader('Content-Type', 'text/plain');
     res.send('PA Mentor');
@@ -49,10 +50,17 @@ server.get('/api/stats', function (req, res) {
     res.redirect('/api/stats/0');
 });
 
-server.get('/api/stats/:timepoint', function (req, res) {
+server.get('/api/stats/:timepoint', function (req, res, next) {
     /** Shows stats at the specified timepoint */
-    res.setHeader('Content-Type', 'application/json');
-    res.send(["foo", "bar"]);
+    var timepoint = parseInt(req.params.timepoint);
+    analytics.at(timepoint, function (err, data) {
+        if (err) {
+            next(err);
+            return;
+        }
+        res.setHeader('Content-Type', 'application/json');
+        res.send(data);
+    });
 });
 
 module.exports = server;

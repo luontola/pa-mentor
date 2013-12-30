@@ -9,8 +9,9 @@ in-game stats compare to other players.
 Building
 --------
 
-Runs on [Node.js](http://nodejs.org/) - install it first. You'll need the
-`node` and `npm` commands to build this project.
+Uses [Node.js](http://nodejs.org/) and [MongoDB](http://www.mongodb.org/) -
+install them first. You'll need the `node` and `npm` commands to build this
+project and `mongod` running in the background to run the tests.
 
 Downloading dependencies:
 

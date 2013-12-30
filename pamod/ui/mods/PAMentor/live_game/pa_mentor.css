@@ -1,14 +1,25 @@
 #pa_mentor_frame_content {
     white-space: nowrap;
+    font-family: 'DINPRO-BOLD';
+    color: white;
+    text-shadow: 0 2px 2px #000;
 }
 
-#pa_mentor_frame_content th {
+#pa_mentor_frame_content thead th {
+    text-align: center;
+    font-size: .75em;
+}
+
+#pa_mentor_frame_content tbody th {
+    padding-left: 4px;
     text-align: left;
-    padding-left: 5px;
+    font-size: .60em;
 }
 
-#pa_mentor_frame_content td {
-    padding-left: 10px;
+#pa_mentor_frame_content tbody td {
+    padding-left: 4px;
+    text-align: right;
+    font-size: .75em;
 }
 
 #pa_mentor_frame_content .good {

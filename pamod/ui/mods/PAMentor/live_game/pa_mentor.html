@@ -2,18 +2,14 @@
 <table>
     <thead>
     <tr>
-        <th colspan="2">PA Mentor</th>
+        <th>PA Mentor</th>
     </tr>
     </thead>
     <tbody data-bind="foreach: pamentor.variables">
     <tr>
-        <th><span data-bind="text: label">...</span></th>
-        <td>
-            <span data-bind="text: value">...</span>
-            <span data-bind="visible: percentile() >= 0, css: status">
-                (<span data-bind="text: percentile">...</span>%)
-            </span>
-        </td>
+        <th data-bind="text: label">...</th>
+        <td data-bind="text: value">...</td>
+        <td data-bind="visible: percentile() >= 0, css: status"><span data-bind="text: percentile">...</span>%</td>
     </tr>
     </tbody>
 </table>

@@ -3,9 +3,9 @@
 // The license text is at http://www.apache.org/licenses/LICENSE-2.0
 
 var assert = require('assert');
-var db = require('../src/db');
-var games = require('../src/games');
-var analytics = require('../src/analytics');
+var db = require('../server/db');
+var games = require('../server/games');
+var analytics = require('../server/analytics');
 
 function assertCount(expectedCount, collection, done) {
     collection.count(function (err, actualCount) {

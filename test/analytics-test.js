@@ -4,9 +4,9 @@
 
 var assert = require('assert');
 var sinon = require('sinon');
-var analytics = require('../src/analytics');
-var games = require('../src/games');
-var db = require('../src/db');
+var analytics = require('../server/analytics');
+var games = require('../server/games');
+var db = require('../server/db');
 
 function someStatValue(value) {
     return {

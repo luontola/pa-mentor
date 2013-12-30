@@ -26,4 +26,4 @@ Running tests:
 Running
 -------
 
-    NODE_ENV=production node src
+    NODE_ENV=production node server

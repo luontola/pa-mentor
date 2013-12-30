@@ -77,7 +77,11 @@ pamentor = (function () {
         pamentor.variables.push(variable);
     }
 
-    initVariable('Units', 'armyCount', model.armySize);
+    initVariable('Unit Count', 'armyCount', model.armySize);
+    initVariable('Metal Income', 'metalIncome', model.metalGain);
+    initVariable('Metal Spending', 'metalSpending', model.metalLoss);
+    initVariable('Energy Income', 'energyIncome', model.energyGain);
+    initVariable('Energy Spending', 'energySpending', model.energyLoss);
 
     return pamentor;
 })();

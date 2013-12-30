@@ -12,7 +12,10 @@ stats._map = function () {
         var result = {};
         for (var property in entry) {
             if (entry.hasOwnProperty(property) && property !== 'timepoint') {
-                result[property] = [ entry[property] ];
+                result[property] = {
+                    values: [ entry[property] ],
+                    percentiles: [ 100 ]
+                };
             }
         }
         return result;
@@ -30,29 +33,16 @@ stats._map = function () {
             entries.forEach(function (entry) {
                 startTime = startTime || entry.timepoint;
                 var relativeTime = entry.timepoint - startTime;
-                emit(roundByMultiple(relativeTime, 5000), convert(entry));
+
+                var result = convert(entry);
+                result.timepoint = roundByMultiple(relativeTime, 5000);
+                emit(result.timepoint, result);
             })
         }
     }
 };
 
-stats._reduce = function (key, values) {
-
-    function mergeProperties(entries) {
-        var merged = {};
-        for (var i = 0; i < entries.length; i++) {
-            var entry = entries[i];
-            for (var property in entry) {
-                if (entry.hasOwnProperty(property)) {
-                    var list = merged[property] = (merged[property] || []);
-                    entry[property].forEach(function (value) {
-                        list.push(value);
-                    });
-                }
-            }
-        }
-        return merged;
-    }
+stats._reduce = function (id, entries) {
 
     function compareNumbers(a, b) {
         return a - b;
@@ -68,27 +58,41 @@ stats._reduce = function (key, values) {
         }
     }
 
-    function calculatePercentiles(values) {
-        values.sort(compareNumbers);
+    function recalculatePercentiles(entry) {
+        entry.values.sort(compareNumbers);
         var percentiles = [];
-        for (var i = 0; i < values.length; i++) {
-            percentiles.push(Math.round(100 * (i + 1) / values.length)); // "a*c/b" instead of "a/(b/c)" produces more accurate fractions
+        var count = entry.values.length;
+        for (var i = 0; i < count; i++) {
+            percentiles.push(Math.round(100 * (i + 1) / count)); // "a*c/b" instead of "a/(b/c)" produces more accurate fractions
         }
-        deduplicate(values, percentiles);
-        return {
-            values: values,
-            percentiles: percentiles
-        };
+        deduplicate(entry.values, percentiles);
+        entry.percentiles = percentiles;
+        return entry;
     }
 
-    var result = mergeProperties(values);
-    for (var property in result) {
-        if (result.hasOwnProperty(property)) {
-            result[property] = calculatePercentiles(result[property]);
+    var merged = {};
+    for (var i = 0; i < entries.length; i++) {
+        var entry = entries[i];
+        for (var property in entry) {
+            if (entry.hasOwnProperty(property)) {
+
+                if (property === 'timepoint') {
+                    merged[property] = entry[property];
+                } else {
+                    var target = merged[property] = (merged[property] || { values: [] });
+                    entry[property].values.forEach(function (value) {
+                        target.values.push(value);
+                    });
+                }
+            }
         }
     }
-    result.timepoint = key;
-    return result;
+    for (var property in merged) {
+        if (merged.hasOwnProperty(property) && merged[property].values) {
+            recalculatePercentiles(merged[property]);
+        }
+    }
+    return merged;
 };
 
 stats.refresh = function (callback) {

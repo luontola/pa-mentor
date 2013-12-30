@@ -4,9 +4,9 @@
 
 var db = require('./db');
 
-var stats = {};
+var analytics = {};
 
-stats._map = function () {
+analytics._map = function () {
 
     function convert(entry) {
         var result = {};
@@ -42,7 +42,7 @@ stats._map = function () {
     }
 };
 
-stats._reduce = function (id, entries) {
+analytics._reduce = function (id, entries) {
 
     function compareNumbers(a, b) {
         return a - b;
@@ -95,11 +95,11 @@ stats._reduce = function (id, entries) {
     return merged;
 };
 
-stats.refresh = function (callback) {
-    db.games.mapReduce(stats._map, stats._reduce, { out: db.percentiles.name() }, callback);
+analytics.refresh = function (callback) {
+    db.games.mapReduce(analytics._map, analytics._reduce, { out: db.percentiles.name() }, callback);
 };
 
-stats.at = function (timepoint, callback) {
+analytics.at = function (timepoint, callback) {
     timepoint = Math.max(0, timepoint);
     db.percentiles
             .find({ 'value.timepoint': { $lte: timepoint }})
@@ -114,14 +114,14 @@ stats.at = function (timepoint, callback) {
             });
 };
 
-stats.refreshAndGet = function (timepoint, callback) {
-    stats.refresh(function (err) {
+analytics.refreshAndGet = function (timepoint, callback) {
+    analytics.refresh(function (err) {
         if (err) {
             callback(err);
         } else {
-            stats.at(timepoint, callback);
+            analytics.at(timepoint, callback);
         }
     });
 };
 
-module.exports = stats;
+module.exports = analytics;

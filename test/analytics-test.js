@@ -4,7 +4,7 @@
 
 var assert = require('assert');
 var sinon = require('sinon');
-var stats = require('../src/stats');
+var analytics = require('../src/analytics');
 var games = require('../src/games');
 var db = require('../src/db');
 
@@ -18,7 +18,7 @@ function someStatValue(value) {
     };
 }
 
-describe('Stats', function () {
+describe('Analytics:', function () {
 
     describe("#_map()", function () {
         beforeEach(function () {
@@ -41,7 +41,7 @@ describe('Stats', function () {
                 }
             };
 
-            stats._map.apply(game);
+            analytics._map.apply(game);
 
             assert.deepEqual([0, {
                 timepoint: 0,
@@ -68,7 +68,7 @@ describe('Stats', function () {
                 }
             };
 
-            stats._map.apply(game);
+            analytics._map.apply(game);
 
             assert.deepEqual([0, {
                 timepoint: 0,
@@ -90,7 +90,7 @@ describe('Stats', function () {
                 }
             };
 
-            stats._map.apply(game);
+            analytics._map.apply(game);
 
             assert.deepEqual([0, {
                 timepoint: 0,
@@ -114,7 +114,7 @@ describe('Stats', function () {
                 }
             };
 
-            stats._map.apply(game);
+            analytics._map.apply(game);
 
             assert.deepEqual([0, {
                 timepoint: 0,
@@ -153,7 +153,7 @@ describe('Stats', function () {
                 }
             ];
 
-            var results = stats._reduce(5000, entries);
+            var results = analytics._reduce(5000, entries);
 
             assert.deepEqual({
                 timepoint: 5000,
@@ -171,7 +171,7 @@ describe('Stats', function () {
                 someStatValue(30)
             ];
 
-            var results = stats._reduce(0, entries);
+            var results = analytics._reduce(0, entries);
 
             assert.deepEqual({
                 timepoint: 0,
@@ -189,7 +189,7 @@ describe('Stats', function () {
                 someStatValue(2)
             ];
 
-            var results = stats._reduce(0, entries);
+            var results = analytics._reduce(0, entries);
 
             assert.deepEqual([1, 2, 10], results.someStat.values);
         });
@@ -202,7 +202,7 @@ describe('Stats', function () {
                 someStatValue(2)
             ];
 
-            var results = stats._reduce(0, entries);
+            var results = analytics._reduce(0, entries);
 
             assert.deepEqual({
                 timepoint: 0,
@@ -219,7 +219,7 @@ describe('Stats', function () {
                 entries.push(someStatValue(10 * i)); // two values for each percentile
             }
 
-            var results = stats._reduce(0, entries);
+            var results = analytics._reduce(0, entries);
 
             assert.deepEqual([1, 2, 3, 4, 5], results.someStat.percentiles.slice(0, 5));
             assert.deepEqual([20, 40, 60, 80, 100], results.someStat.values.slice(0, 5));
@@ -244,13 +244,13 @@ describe('Stats', function () {
                 assert.ifError(err);
                 games.save(game, function (err) {
                     assert.ifError(err);
-                    stats.refresh(done)
+                    analytics.refresh(done)
                 });
             });
         });
 
         it("Returns the stats at the specified timepoint", function (done) {
-            stats.at(5000, function (err, data) {
+            analytics.at(5000, function (err, data) {
                 assert.equal(5000, data.timepoint);
                 assert.deepEqual([2], data.stat.values);
                 done();
@@ -258,7 +258,7 @@ describe('Stats', function () {
         });
 
         it("Rounds the timepoint if there is no exact match", function (done) {
-            stats.at(5100, function (err, data) {
+            analytics.at(5100, function (err, data) {
                 assert.equal(5000, data.timepoint);
                 assert.deepEqual([2], data.stat.values);
                 done();
@@ -266,7 +266,7 @@ describe('Stats', function () {
         });
 
         it("Timepoint into future returns the last timepoint", function (done) {
-            stats.at(24 * 3600 * 1000, function (err, data) {
+            analytics.at(24 * 3600 * 1000, function (err, data) {
                 assert.equal(10000, data.timepoint);
                 assert.deepEqual([3], data.stat.values);
                 done();
@@ -274,7 +274,7 @@ describe('Stats', function () {
         });
 
         it("Timepoint into past returns the first timepoint", function (done) {
-            stats.at(-1, function (err, data) {
+            analytics.at(-1, function (err, data) {
                 assert.equal(0, data.timepoint);
                 assert.deepEqual([1], data.stat.values);
                 done();

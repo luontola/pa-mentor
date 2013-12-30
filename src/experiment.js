@@ -5,15 +5,15 @@
 var db = require('./db');
 var rest = require('./rest');
 var games = require('./games');
-var stats = require('./stats');
+var analytics = require('./analytics');
 
 rest.getObject('http://www.nanodesu.info/pastats/report/get?gameId=11919', function (game) {
     games.save(game, function (err) {
         console.log(game, err);
 
         console.log("\nCalculating statistics...");
-        stats.refreshAndGet(5000 * 100, function (err, statistics) {
-            console.log(JSON.stringify(statistics, null, 2));
+        analytics.refreshAndGet(5000 * 100, function (err, stats) {
+            console.log(JSON.stringify(stats, null, 2));
             db.close();
         });
     });

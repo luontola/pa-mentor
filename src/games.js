@@ -3,9 +3,7 @@
 // The license text is at http://www.apache.org/licenses/LICENSE-2.0
 
 var assert = require('assert');
-var rest = require('./rest');
 var db = require('./db');
-var stats = require('./stats');
 
 exports.save = function (game, callback) {
     var gameId = game.gameId;

@@ -7,7 +7,9 @@
         <th>Units</th>
         <td>
             <span data-bind="text: pamentor.armyCount.value">...</span>
-            (<span data-bind="text: pamentor.armyCount.percentile">...</span>%)
+            <span data-bind="css: pamentor.armyCount.status">
+                (<span data-bind="text: pamentor.armyCount.percentile">...</span>%)
+            </span>
         </td>
     </tr>
 </table>

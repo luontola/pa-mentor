@@ -5,3 +5,19 @@
 #pa_mentor_frame_content td {
     padding-left: 10px;
 }
+
+#pa_mentor_frame_content .good {
+    color: #00FF00;
+}
+
+#pa_mentor_frame_content .acceptable {
+    color: #F9EC31;
+}
+
+#pa_mentor_frame_content .bad {
+    color: #FF8000;
+}
+
+#pa_mentor_frame_content .awful {
+    color: #FF0000;
+}

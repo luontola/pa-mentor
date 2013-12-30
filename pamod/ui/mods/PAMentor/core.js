@@ -50,9 +50,26 @@ pamentor = (function () {
         var percentile = ko.computed(function () {
             return findPercentile(value(), pamentor.stats()[name]);
         });
+        var status = ko.computed(function () {
+            var p = percentile();
+            if (p >= 75) {
+                return 'good';
+            }
+            if (p >= 50) {
+                return 'acceptable';
+            }
+            if (p >= 25) {
+                return 'bad';
+            }
+            if (p >= 0) {
+                return 'awful';
+            }
+            return null;
+        });
         pamentor[name] = {
             value: value,
-            percentile: percentile
+            percentile: percentile,
+            status: status
         };
     }
 

@@ -31,10 +31,11 @@ pamentor = (function () {
             pamentor.stats(stats);
         });
     };
+    pamentor.variables = ko.observableArray();
 
     function findPercentile(value, stats) {
         if (!stats) {
-            return '?';
+            return -1;
         }
         var myPercentile = 0;
         for (var i = 0; i < stats.values.length; i++) {
@@ -45,10 +46,10 @@ pamentor = (function () {
         return myPercentile;
     }
 
-    function createStat(name, valueFn) {
+    function initVariable(label, id, valueFn) {
         var value = ko.computed(valueFn);
         var percentile = ko.computed(function () {
-            return findPercentile(value(), pamentor.stats()[name]);
+            return findPercentile(value(), pamentor.stats()[id]);
         });
         var status = ko.computed(function () {
             var p = percentile();
@@ -66,14 +67,17 @@ pamentor = (function () {
             }
             return null;
         });
-        pamentor[name] = {
+        var variable = {
+            label: label,
             value: value,
             percentile: percentile,
             status: status
         };
+        pamentor[id] = variable;
+        pamentor.variables.push(variable);
     }
 
-    createStat('armyCount', model.armySize);
+    initVariable('Units', 'armyCount', model.armySize);
 
     return pamentor;
 })();

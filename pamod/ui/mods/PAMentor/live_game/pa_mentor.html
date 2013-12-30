@@ -1,15 +1,19 @@
 <!-- PA MENTOR -->
 <table>
+    <thead>
     <tr>
         <th colspan="2">PA Mentor</th>
     </tr>
+    </thead>
+    <tbody data-bind="foreach: pamentor.variables">
     <tr>
-        <th>Units</th>
+        <th><span data-bind="text: label">...</span></th>
         <td>
-            <span data-bind="text: pamentor.armyCount.value">...</span>
-            <span data-bind="css: pamentor.armyCount.status">
-                (<span data-bind="text: pamentor.armyCount.percentile">...</span>%)
+            <span data-bind="text: value">...</span>
+            <span data-bind="visible: percentile() >= 0, css: status">
+                (<span data-bind="text: percentile">...</span>%)
             </span>
         </td>
     </tr>
+    </tbody>
 </table>

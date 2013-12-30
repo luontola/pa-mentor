@@ -21,3 +21,9 @@ Running tests:
 
     npm test
     npm run-script autotest
+
+
+Running
+-------
+
+    NODE_ENV=production node src

@@ -14,7 +14,8 @@
 
     "dependencies": {
         "mongojs": "0.9.11",
-        "express": "3.4.7"
+        "express": "3.4.7",
+        "underscore": "1.5.2"
     },
     "devDependencies": {
         "mocha": "1.16.2",

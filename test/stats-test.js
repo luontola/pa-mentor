@@ -227,4 +227,58 @@ describe('Stats', function () {
             assert.deepEqual([1920, 1940, 1960, 1980, 2000], results.someStat.values.slice(95, 100));
         });
     });
+
+    describe("#at()", function () {
+        beforeEach(function (done) {
+            var game = {
+                "gameId": 123,
+                "playerTimeData": {
+                    "123": [
+                        {"timepoint": 10000000, "stat": 1},
+                        {"timepoint": 10005000, "stat": 2},
+                        {"timepoint": 10010000, "stat": 3}
+                    ]
+                }
+            };
+            db.removeAll(function (err) {
+                assert.ifError(err);
+                games.save(game, function (err) {
+                    assert.ifError(err);
+                    stats.refresh(done)
+                });
+            });
+        });
+
+        it("Returns the stats at the specified timepoint", function (done) {
+            stats.at(5000, function (err, data) {
+                assert.equal(5000, data.timepoint);
+                assert.deepEqual([2], data.stat.values);
+                done();
+            });
+        });
+
+        it("Rounds the timepoint if there is no exact match", function (done) {
+            stats.at(5100, function (err, data) {
+                assert.equal(5000, data.timepoint);
+                assert.deepEqual([2], data.stat.values);
+                done();
+            });
+        });
+
+        it("Timepoint into future returns the last timepoint", function (done) {
+            stats.at(24 * 3600 * 1000, function (err, data) {
+                assert.equal(10000, data.timepoint);
+                assert.deepEqual([3], data.stat.values);
+                done();
+            });
+        });
+
+        it("Timepoint into past returns the first timepoint", function (done) {
+            stats.at(-1, function (err, data) {
+                assert.equal(0, data.timepoint);
+                assert.deepEqual([1], data.stat.values);
+                done();
+            });
+        });
+    });
 });

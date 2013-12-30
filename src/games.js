@@ -9,7 +9,7 @@ var stats = require('./stats');
 
 exports.save = function (game, callback) {
     var gameId = game.gameId;
-    assert.ok(gameId);
+    assert.ok(gameId, "gameId is missing");
     db.games.findOne({ gameId: gameId }, function (err, old) {
         if (err) {
             callback(err);

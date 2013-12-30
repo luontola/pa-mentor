@@ -100,13 +100,18 @@ stats.refresh = function (callback) {
 };
 
 stats.at = function (timepoint, callback) {
-    db.percentiles.findOne({ 'value.timepoint': timepoint }, function (err, doc) {
-        if (err) {
-            callback(err);
-        } else {
-            callback(null, doc.value);
-        }
-    });
+    timepoint = Math.max(0, timepoint);
+    db.percentiles
+            .find({ 'value.timepoint': { $lte: timepoint }})
+            .sort({ 'value.timepoint': -1 })
+            .limit(1)
+            .next(function (err, doc) {
+                if (err) {
+                    callback(err);
+                } else {
+                    callback(null, doc.value);
+                }
+            });
 };
 
 stats.refreshAndGet = function (timepoint, callback) {

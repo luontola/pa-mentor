@@ -14,11 +14,11 @@ rest.getObject('http://www.nanodesu.info/pastats/report/get?gameId=' + gameId, f
         throw err;
     }
     games.save(game, function (err) {
-        console.log(game, err);
+        console.info(game, err);
 
-        console.log("\nCalculating statistics...");
+        console.info("\nCalculating statistics...");
         analytics.refreshAndGet(5000 * 100, function (err, stats) {
-            console.log(JSON.stringify(stats, null, 2));
+            console.info(JSON.stringify(stats, null, 2));
             db.close();
         });
     });

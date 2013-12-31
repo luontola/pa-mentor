@@ -11,13 +11,13 @@ updater.start = function () {
     var interval = config.updateIntervalSeconds * 1000;
 
     function updateLoop() {
-        console.log("Updating...");
+        console.info("Updating...");
         updater.update(function (err) {
             if (err) {
-                console.log("Failed to update");
-                console.log(err);
+                console.warn("Failed to update");
+                console.warn(err);
             } else {
-                console.log("Update done");
+                console.info("Update done");
             }
             setTimeout(updateLoop, interval);
         });

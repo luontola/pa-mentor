@@ -67,8 +67,8 @@ server.get('/api/stats/:timepoint', function (req, res, next) {
 server.start = function (callback) {
     var port = config.port;
     server.listen(port, function () {
-        console.log("Server listening on port %s", port);
-        console.log("Running in %s mode", server.get('env'));
+        console.info("Server listening on port %s", port);
+        console.info("Running in %s mode", server.get('env'));
         callback();
     });
 };

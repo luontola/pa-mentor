@@ -2,6 +2,7 @@
 // This software is released under the Apache License 2.0.
 // The license text is at http://www.apache.org/licenses/LICENSE-2.0
 
+var Q = require('q');
 var http = require('http');
 var express = require('express');
 var _ = require('underscore');
@@ -19,7 +20,7 @@ function getFunctionDocs(fn) {
 }
 
 function getApiDocs() {
-    return   _.chain(server.routes.get)
+    return _.chain(server.routes.get)
             .filter(function (route) {
                 return route.path.indexOf('/api') === 0;
             })
@@ -54,23 +55,19 @@ server.get('/api/stats', function (req, res) {
 server.get('/api/stats/:timepoint', function (req, res, next) {
     /** Shows stats at the specified timepoint */
     var timepoint = parseInt(req.params.timepoint);
-    analytics.at(timepoint, function (err, data) {
-        if (err) {
-            next(err);
-            return;
-        }
+    analytics.at(timepoint).then(function (data) {
         res.setHeader('Content-Type', 'application/json');
         res.send(data);
-    });
+    }).fail(next);
 });
 
-server.start = function (callback) {
+server.start = function () {
     var port = config.port;
-    server.listen(port, function () {
-        console.info("Server listening on port %s", port);
-        console.info("Running in %s mode", server.get('env'));
-        callback();
-    });
+    return Q.ninvoke(server, 'listen', port)
+            .then(function () {
+                console.info("Server listening on port %s", port);
+                console.info("Running in %s mode", server.get('env'));
+            });
 };
 
 module.exports = server;

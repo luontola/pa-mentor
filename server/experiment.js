@@ -10,13 +10,11 @@ var analytics = require('./analytics');
 
 var gameId = process.argv[2] || 11919;
 
-Q.nfcall(rest.getObject, 'http://www.nanodesu.info/pastats/report/get?gameId=' + gameId)
-        .then(function (game) {
-            return Q.nfcall(games.save, game);
-        })
+rest.getObject('http://www.nanodesu.info/pastats/report/get?gameId=' + gameId)
+        .then(games.save)
         .then(function () {
             console.info("\nCalculating statistics...");
-            return Q.nfcall(analytics.refreshAndGet, 5000 * 100);
+            return analytics.refreshAndGet(5000 * 100);
         })
         .then(function (stats) {
             console.info(JSON.stringify(stats, null, 2));

@@ -17,35 +17,37 @@ function assertCount(expectedCount, collection, done) {
 
 describe('Games:', function () {
     beforeEach(function (done) {
-        db.removeAll(done);
+        db.removeAll().fin(done);
     });
 
     it('Saves a game to database', function (done) {
-        games.save({gameId: 10}, function () {
-
-            assertCount(1, db.games, done);
-        });
+        games.save({gameId: 10})
+                .done(function () {
+                    assertCount(1, db.games, done);
+                });
     });
     it('Saves multiple games to database', function (done) {
-        games.save({gameId: 10}, function () {
-            games.save({gameId: 20}, function () {
-
-                assertCount(2, db.games, done);
-            });
-        });
+        games.save({gameId: 10})
+                .then(function () {
+                    return games.save({gameId: 20})
+                })
+                .done(function () {
+                    assertCount(2, db.games, done);
+                });
     });
     describe('Saving the same game multiple times', function () {
         beforeEach(function (done) {
-            games.save({gameId: 10, someField: "first version"}, function () {
-                games.save({gameId: 10, someField: "second version"}, done);
-            });
+            games.save({gameId: 10, someField: "first version"})
+                    .then(function () {
+                        return games.save({gameId: 10, someField: "second version"})
+                    })
+                    .fin(done);
         });
         it('Saves only one copy', function (done) {
             assertCount(1, db.games, done);
         });
         it('Updates the persisted entity', function (done) {
-            db.games.findOne({gameId: 10}, function (err, game) {
-                assert.ifError(err);
+            games.findById(10).done(function (game) {
                 assert.equal("second version", game.someField);
                 done();
             });
@@ -85,14 +87,14 @@ describe('Games:', function () {
             }
         };
 
-        games.save(game, function () {
-
-            analytics.refreshAndGet(5000, function (err, stats) {
-                assert.ifError(err);
-                assert.deepEqual([654, 688, 720, 759], stats.metalStored.values);
-                assert.deepEqual([25, 50, 75, 100], stats.metalStored.percentiles);
-                done();
-            })
-        })
+        games.save(game)
+                .then(function () {
+                    return analytics.refreshAndGet(5000)
+                })
+                .done(function (stats) {
+                    assert.deepEqual([654, 688, 720, 759], stats.metalStored.values);
+                    assert.deepEqual([25, 50, 75, 100], stats.metalStored.percentiles);
+                    done();
+                });
     });
 });

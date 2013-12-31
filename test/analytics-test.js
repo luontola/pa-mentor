@@ -240,17 +240,16 @@ describe('Analytics:', function () {
                     ]
                 }
             };
-            db.removeAll(function (err) {
-                assert.ifError(err);
-                games.save(game, function (err) {
-                    assert.ifError(err);
-                    analytics.refresh(done)
-                });
-            });
+            db.removeAll()
+                    .then(function () {
+                        return games.save(game);
+                    })
+                    .then(analytics.refresh)
+                    .fin(done).done();
         });
 
         it("Returns the stats at the specified timepoint", function (done) {
-            analytics.at(5000, function (err, data) {
+            analytics.at(5000).done(function (data) {
                 assert.equal(5000, data.timepoint);
                 assert.deepEqual([2], data.stat.values);
                 done();
@@ -258,7 +257,7 @@ describe('Analytics:', function () {
         });
 
         it("Rounds the timepoint if there is no exact match", function (done) {
-            analytics.at(5100, function (err, data) {
+            analytics.at(5100).done(function (data) {
                 assert.equal(5000, data.timepoint);
                 assert.deepEqual([2], data.stat.values);
                 done();
@@ -266,7 +265,7 @@ describe('Analytics:', function () {
         });
 
         it("Timepoint into future returns the last timepoint", function (done) {
-            analytics.at(24 * 3600 * 1000, function (err, data) {
+            analytics.at(24 * 3600 * 1000).done(function (data) {
                 assert.equal(10000, data.timepoint);
                 assert.deepEqual([3], data.stat.values);
                 done();
@@ -274,7 +273,7 @@ describe('Analytics:', function () {
         });
 
         it("Timepoint into past returns the first timepoint", function (done) {
-            analytics.at(-1, function (err, data) {
+            analytics.at(-1).done(function (data) {
                 assert.equal(0, data.timepoint);
                 assert.deepEqual([1], data.stat.values);
                 done();
@@ -282,13 +281,14 @@ describe('Analytics:', function () {
         });
 
         it("Gives an error if there is no data", function (done) {
-            db.removeAll(function () {
-                analytics.at(0, function (err, data) {
-                    assert.ok(err instanceof Error);
-                    assert.equal(null, data);
-                    done();
-                });
-            });
+            db.removeAll()
+                    .then(function () {
+                        return analytics.at(0);
+                    })
+                    .done(assert.fail, function (err) {
+                        assert.ok(err instanceof Error);
+                        done();
+                    });
         });
     });
 });

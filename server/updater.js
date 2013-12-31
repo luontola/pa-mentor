@@ -4,6 +4,7 @@
 
 var config = require('./config');
 var analytics = require('./analytics');
+var rest = require('./rest');
 
 var updater = {};
 
@@ -12,23 +13,27 @@ updater.start = function () {
 
     function updateLoop() {
         console.info("Updating...");
-        updater.update(function (err) {
-            if (err) {
-                console.warn("Failed to update");
-                console.warn(err);
-            } else {
-                console.info("Update done");
-            }
-            setTimeout(updateLoop, interval);
-        });
+        updater.update()
+                .then(function () {
+                    console.info("Update done");
+                })
+                .fail(function (err) {
+                    console.warn("Failed to update");
+                    console.warn(err);
+                })
+                .fin(function () {
+                    setTimeout(updateLoop, interval);
+                })
+                .done();
     }
 
     updateLoop();
 };
 
-updater.update = function (callback) {
-    // TODO: fetch games
-    analytics.refresh(callback);
+updater.update = function () {
+    // TODO: fetch and save new games
+    return rest.getObject('http://www.nanodesu.info/pastats/report/winners?start=1386916400&duration=86400')
+            .then(analytics.refresh);
 };
 
 module.exports = updater;

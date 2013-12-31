@@ -2,37 +2,43 @@
 // This software is released under the Apache License 2.0.
 // The license text is at http://www.apache.org/licenses/LICENSE-2.0
 
+var Q = require('q');
 var http = require('http');
 
-function readFully(res, encoding, callback) {
+var rest = {};
+
+function readFully(res, encoding) {
+    var result = Q.defer();
+    var buffer = '';
     res.setEncoding(encoding);
-    var content = '';
     res.on('data', function (chunk) {
-        content += chunk;
+        buffer += chunk;
     });
     res.on('end', function () {
-        callback(null, content);
+        result.resolve(buffer);
     });
+    res.on('error', function (err) {
+        result.reject(err);
+    });
+    return result.promise;
 }
 
-exports.getString = function (url, callback) {
+rest.getString = function (url) {
+    var result = Q.defer();
     http.get(url,function (res) {
         if (res.statusCode !== 200) {
-            callback(new Error('Failed to get ' + url + ' - status code was ' + res.statusCode));
+            result.reject(new Error('Failed to get ' + url + ' - status code was ' + res.statusCode));
         } else {
-            readFully(res, 'utf8', callback);
+            result.resolve(readFully(res, 'utf8'));
         }
     }).on('error', function (err) {
-                callback(new Error('Failed to get ' + url + ' - ' + err.message));
+                result.reject(new Error('Failed to get ' + url + ' - ' + err.message));
             });
+    return result.promise;
 };
 
-exports.getObject = function (url, callback) {
-    exports.getString(url, function (err, content) {
-        if (err) {
-            callback(err)
-        } else {
-            callback(null, JSON.parse(content));
-        }
-    })
+rest.getObject = function (url) {
+    return rest.getString(url).then(JSON.parse);
 };
+
+module.exports = rest;

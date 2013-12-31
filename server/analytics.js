@@ -2,6 +2,7 @@
 // This software is released under the Apache License 2.0.
 // The license text is at http://www.apache.org/licenses/LICENSE-2.0
 
+var Q = require('q');
 var db = require('./db');
 
 var analytics = {};
@@ -95,11 +96,12 @@ analytics._reduce = function (id, entries) {
     return merged;
 };
 
-analytics.refresh = function (callback) {
-    db.games.mapReduce(analytics._map, analytics._reduce, { out: db.percentiles.name() }, callback);
+analytics.refresh = function () {
+    return Q.ninvoke(db.games, 'mapReduce', analytics._map, analytics._reduce, { out: db.percentiles.name() });
 };
 
-analytics.at = function (timepoint, callback) {
+analytics.at = function (timepoint) {
+    var result = Q.defer();
     timepoint = Math.max(0, timepoint);
     db.percentiles
             .find({ 'value.timepoint': { $lte: timepoint }})
@@ -107,22 +109,19 @@ analytics.at = function (timepoint, callback) {
             .limit(1)
             .next(function (err, doc) {
                 if (err) {
-                    callback(err);
+                    result.reject(err);
                 } else if (!doc) {
-                    callback(new Error("No data found at timepoint " + timepoint));
+                    result.reject(new Error("No data found at timepoint " + timepoint));
                 } else {
-                    callback(null, doc.value);
+                    result.resolve(doc.value);
                 }
             });
+    return result.promise;
 };
 
-analytics.refreshAndGet = function (timepoint, callback) {
-    analytics.refresh(function (err) {
-        if (err) {
-            callback(err);
-        } else {
-            analytics.at(timepoint, callback);
-        }
+analytics.refreshAndGet = function (timepoint) {
+    return analytics.refresh().then(function () {
+        return analytics.at(timepoint);
     });
 };
 

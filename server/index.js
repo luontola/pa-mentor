@@ -6,6 +6,4 @@ require('log-timestamp');
 var server = require('./server');
 var updater = require('./updater');
 
-server.start(function () {
-    updater.start()
-});
+server.start().then(updater.start).done();

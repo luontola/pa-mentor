@@ -2,6 +2,7 @@
 // This software is released under the Apache License 2.0.
 // The license text is at http://www.apache.org/licenses/LICENSE-2.0
 
+var Q = require('q');
 var mongojs = require('mongojs');
 var config = require('./config');
 
@@ -19,10 +20,11 @@ db.percentiles.ensureIndex({'value.timepoint': 1}, { unique: true }, function (e
     }
 });
 
-db.removeAll = function (done) {
-    db.games.remove(function () {
-        db.percentiles.remove(done);
-    });
+db.removeAll = function () {
+    return Q.all([
+        Q.ninvoke(db.games, 'remove'),
+        Q.ninvoke(db.percentiles, 'remove')
+    ]);
 };
 
 mongojs.Collection.prototype.name = function () {

@@ -4,7 +4,8 @@
 
 var config = {
     port: process.env.PA_MENTOR_PORT || 8080,
-    dbUri: process.env.PA_MENTOR_DB_URI || 'mongodb://localhost:27017/paMentorTest'
+    dbUri: process.env.PA_MENTOR_DB_URI || 'mongodb://localhost:27017/paMentorTest',
+    updateIntervalSeconds: Math.max(1, process.env.PA_MENTOR_UPDATE_INTERVAL || 60 * 60)
 };
 
 module.exports = config;

@@ -3,5 +3,8 @@
 // The license text is at http://www.apache.org/licenses/LICENSE-2.0
 
 var server = require('./server');
+var updater = require('./updater');
 
-server.start();
+server.start(function () {
+    updater.start()
+});

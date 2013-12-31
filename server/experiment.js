@@ -9,7 +9,10 @@ var analytics = require('./analytics');
 
 var gameId = process.argv[2] || 11919;
 
-rest.getObject('http://www.nanodesu.info/pastats/report/get?gameId=' + gameId, function (game) {
+rest.getObject('http://www.nanodesu.info/pastats/report/get?gameId=' + gameId, function (err, game) {
+    if (err) {
+        throw err;
+    }
     games.save(game, function (err) {
         console.log(game, err);
 

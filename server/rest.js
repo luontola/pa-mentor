@@ -3,7 +3,6 @@
 // The license text is at http://www.apache.org/licenses/LICENSE-2.0
 
 var http = require('http');
-var util = require('util');
 
 function readFully(res, encoding, callback) {
     res.setEncoding(encoding);
@@ -12,25 +11,28 @@ function readFully(res, encoding, callback) {
         content += chunk;
     });
     res.on('end', function () {
-        callback(content);
+        callback(null, content);
     });
 }
 
 exports.getString = function (url, callback) {
-    var req = http.get(url, function (res) {
+    http.get(url,function (res) {
         if (res.statusCode !== 200) {
-            util.log('WARN: Failed to get ' + url + ' - status code ' + res.statusCode);
-            return;
+            callback(new Error('Failed to get ' + url + ' - status code was ' + res.statusCode));
+        } else {
+            readFully(res, 'utf8', callback);
         }
-        readFully(res, 'utf8', callback);
-    });
-    req.on('error', function (e) {
-        util.log('WARN: Failed to get ' + url + ' - ' + e.message);
-    });
+    }).on('error', function (err) {
+                callback(new Error('Failed to get ' + url + ' - ' + err.message));
+            });
 };
 
 exports.getObject = function (url, callback) {
-    exports.getString(url, function (content) {
-        callback(JSON.parse(content));
+    exports.getString(url, function (err, content) {
+        if (err) {
+            callback(err)
+        } else {
+            callback(null, JSON.parse(content));
+        }
     })
 };

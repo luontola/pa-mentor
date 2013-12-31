@@ -18,8 +18,7 @@ updater.start = function () {
                 console.info("Update done");
             })
             .fail(function (err) {
-                console.warn("Failed to update");
-                console.warn(err);
+                console.warn("Update failed\n", err.stack);
             })
             .fin(function () {
                 setTimeout(updateLoop, interval);

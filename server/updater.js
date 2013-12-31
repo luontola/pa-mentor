@@ -14,17 +14,17 @@ updater.start = function () {
     function updateLoop() {
         console.info("Updating...");
         updater.update()
-                .then(function () {
-                    console.info("Update done");
-                })
-                .fail(function (err) {
-                    console.warn("Failed to update");
-                    console.warn(err);
-                })
-                .fin(function () {
-                    setTimeout(updateLoop, interval);
-                })
-                .done();
+            .then(function () {
+                console.info("Update done");
+            })
+            .fail(function (err) {
+                console.warn("Failed to update");
+                console.warn(err);
+            })
+            .fin(function () {
+                setTimeout(updateLoop, interval);
+            })
+            .done();
     }
 
     updateLoop();
@@ -33,7 +33,7 @@ updater.start = function () {
 updater.update = function () {
     // TODO: fetch and save new games
     return rest.getObject('http://www.nanodesu.info/pastats/report/winners?start=1386916400&duration=86400')
-            .then(analytics.refresh);
+        .then(analytics.refresh);
 };
 
 module.exports = updater;

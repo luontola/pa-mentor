@@ -22,26 +22,26 @@ describe('Games:', function () {
 
     it('Saves a game to database', function (done) {
         games.save({gameId: 10})
-                .done(function () {
-                    assertCount(1, db.games, done);
-                });
+            .done(function () {
+                assertCount(1, db.games, done);
+            });
     });
     it('Saves multiple games to database', function (done) {
         games.save({gameId: 10})
-                .then(function () {
-                    return games.save({gameId: 20})
-                })
-                .done(function () {
-                    assertCount(2, db.games, done);
-                });
+            .then(function () {
+                return games.save({gameId: 20})
+            })
+            .done(function () {
+                assertCount(2, db.games, done);
+            });
     });
     describe('Saving the same game multiple times', function () {
         beforeEach(function (done) {
             games.save({gameId: 10, someField: "first version"})
-                    .then(function () {
-                        return games.save({gameId: 10, someField: "second version"})
-                    })
-                    .fin(done);
+                .then(function () {
+                    return games.save({gameId: 10, someField: "second version"})
+                })
+                .fin(done);
         });
         it('Saves only one copy', function (done) {
             assertCount(1, db.games, done);
@@ -88,13 +88,13 @@ describe('Games:', function () {
         };
 
         games.save(game)
-                .then(function () {
-                    return analytics.refreshAndGet(5000)
-                })
-                .done(function (stats) {
-                    assert.deepEqual([654, 688, 720, 759], stats.metalStored.values);
-                    assert.deepEqual([25, 50, 75, 100], stats.metalStored.percentiles);
-                    done();
-                });
+            .then(function () {
+                return analytics.refreshAndGet(5000)
+            })
+            .done(function (stats) {
+                assert.deepEqual([654, 688, 720, 759], stats.metalStored.values);
+                assert.deepEqual([25, 50, 75, 100], stats.metalStored.percentiles);
+                done();
+            });
     });
 });

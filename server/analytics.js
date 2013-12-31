@@ -104,18 +104,18 @@ analytics.at = function (timepoint) {
     var result = Q.defer();
     timepoint = Math.max(0, timepoint);
     db.percentiles
-            .find({ 'value.timepoint': { $lte: timepoint }})
-            .sort({ 'value.timepoint': -1 })
-            .limit(1)
-            .next(function (err, doc) {
-                if (err) {
-                    result.reject(err);
-                } else if (!doc) {
-                    result.reject(new Error("No data found at timepoint " + timepoint));
-                } else {
-                    result.resolve(doc.value);
-                }
-            });
+        .find({ 'value.timepoint': { $lte: timepoint }})
+        .sort({ 'value.timepoint': -1 })
+        .limit(1)
+        .next(function (err, doc) {
+            if (err) {
+                result.reject(err);
+            } else if (!doc) {
+                result.reject(new Error("No data found at timepoint " + timepoint));
+            } else {
+                result.resolve(doc.value);
+            }
+        });
     return result.promise;
 };
 

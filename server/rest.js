@@ -25,15 +25,16 @@ function readFully(res, encoding) {
 
 rest.getString = function (url) {
     var result = Q.defer();
-    http.get(url,function (res) {
+    var req = http.get(url, function (res) {
         if (res.statusCode !== 200) {
             result.reject(new Error('Failed to get ' + url + ' - status code was ' + res.statusCode));
         } else {
             result.resolve(readFully(res, 'utf8'));
         }
-    }).on('error', function (err) {
-                result.reject(new Error('Failed to get ' + url + ' - ' + err.message));
-            });
+    });
+    req.on('error', function (err) {
+        result.reject(new Error('Failed to get ' + url + ' - ' + err.message));
+    });
     return result.promise;
 };
 

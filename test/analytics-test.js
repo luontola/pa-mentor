@@ -241,11 +241,11 @@ describe('Analytics:', function () {
                 }
             };
             db.removeAll()
-                    .then(function () {
-                        return games.save(game);
-                    })
-                    .then(analytics.refresh)
-                    .fin(done).done();
+                .then(function () {
+                    return games.save(game);
+                })
+                .then(analytics.refresh)
+                .fin(done).done();
         });
 
         it("Returns the stats at the specified timepoint", function (done) {
@@ -282,13 +282,13 @@ describe('Analytics:', function () {
 
         it("Gives an error if there is no data", function (done) {
             db.removeAll()
-                    .then(function () {
-                        return analytics.at(0);
-                    })
-                    .done(assert.fail, function (err) {
-                        assert.ok(err instanceof Error);
-                        done();
-                    });
+                .then(function () {
+                    return analytics.at(0);
+                })
+                .done(assert.fail, function (err) {
+                    assert.ok(err instanceof Error);
+                    done();
+                });
         });
     });
 });

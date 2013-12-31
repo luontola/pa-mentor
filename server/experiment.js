@@ -11,15 +11,15 @@ var analytics = require('./analytics');
 var gameId = process.argv[2] || 11919;
 
 rest.getObject('http://www.nanodesu.info/pastats/report/get?gameId=' + gameId)
-        .then(games.save)
-        .then(function () {
-            console.info("\nCalculating statistics...");
-            return analytics.refreshAndGet(5000 * 100);
-        })
-        .then(function (stats) {
-            console.info(JSON.stringify(stats, null, 2));
-        })
-        .fin(function () {
-            db.close();
-        })
-        .done();
+    .then(games.save)
+    .then(function () {
+        console.info("\nCalculating statistics...");
+        return analytics.refreshAndGet(5000 * 100);
+    })
+    .then(function (stats) {
+        console.info(JSON.stringify(stats, null, 2));
+    })
+    .fin(function () {
+        db.close();
+    })
+    .done();

@@ -21,17 +21,17 @@ function getFunctionDocs(fn) {
 
 function getApiDocs() {
     return _.chain(server.routes.get)
-            .filter(function (route) {
-                return route.path.indexOf('/api') === 0;
-            })
-            .map(function (route) {
-                return {
-                    description: getFunctionDocs(route.callbacks[0]),
-                    path: route.path,
-                    method: route.method
-                };
-            })
-            .value();
+        .filter(function (route) {
+            return route.path.indexOf('/api') === 0;
+        })
+        .map(function (route) {
+            return {
+                description: getFunctionDocs(route.callbacks[0]),
+                path: route.path,
+                method: route.method
+            };
+        })
+        .value();
 }
 
 var server = express();
@@ -64,10 +64,10 @@ server.get('/api/stats/:timepoint', function (req, res, next) {
 server.start = function () {
     var port = config.port;
     return Q.ninvoke(server, 'listen', port)
-            .then(function () {
-                console.info("Server listening on port %s", port);
-                console.info("Running in %s mode", server.get('env'));
-            });
+        .then(function () {
+            console.info("Server listening on port %s", port);
+            console.info("Running in %s mode", server.get('env'));
+        });
 };
 
 module.exports = server;

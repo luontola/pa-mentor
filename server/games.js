@@ -12,12 +12,12 @@ games.save = function (game) {
     var gameId = game.gameId;
     assert.ok(gameId, "gameId is missing");
     return games.findById(gameId)
-            .then(function (old) {
-                if (old) {
-                    game._id = old._id;
-                }
-                return Q.ninvoke(db.games, 'save', game, {w: 1});
-            });
+        .then(function (old) {
+            if (old) {
+                game._id = old._id;
+            }
+            return Q.ninvoke(db.games, 'save', game, {w: 1});
+        });
 };
 
 games.findById = function (gameId) {

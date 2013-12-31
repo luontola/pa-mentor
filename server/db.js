@@ -3,8 +3,9 @@
 // The license text is at http://www.apache.org/licenses/LICENSE-2.0
 
 var mongojs = require('mongojs');
+var config = require('./config');
 
-var db = mongojs('mongodb://localhost:27017/paMentorTest', ['games', 'percentiles']);
+var db = mongojs(config.dbUri, ['games', 'percentiles']);
 
 db.games.ensureIndex({ gameId: 1 }, { unique: true }, function (err) {
     if (err) {

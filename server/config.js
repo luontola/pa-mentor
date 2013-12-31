@@ -2,6 +2,9 @@
 // This software is released under the Apache License 2.0.
 // The license text is at http://www.apache.org/licenses/LICENSE-2.0
 
-var server = require('./server');
+var config = {
+    port: process.env.PA_MENTOR_PORT || 8080,
+    dbUri: process.env.PA_MENTOR_DB_URI || 'mongodb://localhost:27017/paMentorTest'
+};
 
-server.start();
+module.exports = config;

@@ -6,6 +6,7 @@ var http = require('http');
 var express = require('express');
 var _ = require('underscore');
 var analytics = require('./analytics');
+var config = require('./config');
 
 function getFunctionDocs(fn) {
     var code = fn.toString();
@@ -62,5 +63,13 @@ server.get('/api/stats/:timepoint', function (req, res, next) {
         res.send(data);
     });
 });
+
+server.start = function () {
+    var port = config.port;
+    server.listen(port, function () {
+        console.log("Server listening on port %s", port)
+        console.log("Running in %s mode", server.get('env'));
+    });
+};
 
 module.exports = server;

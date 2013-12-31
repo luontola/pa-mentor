@@ -16,6 +16,7 @@
         "mongojs": "0.9.11",
         "express": "3.4.7",
         "underscore": "1.5.2",
+        "q": "0.9.7",
         "log-timestamp": "0.1.0"
     },
     "devDependencies": {

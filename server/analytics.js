@@ -1,4 +1,4 @@
-// Copyright © 2013 Esko Luontola <www.orfjackal.net>
+// Copyright © 2013-2014 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://www.apache.org/licenses/LICENSE-2.0
 
@@ -97,26 +97,22 @@ analytics._reduce = function (id, entries) {
 };
 
 analytics.refresh = function () {
-    return Q.ninvoke(db.games, 'mapReduce', analytics._map, analytics._reduce, { out: db.percentiles.name() });
+    return db.games.mapReduce(analytics._map, analytics._reduce, { out: db.percentiles.name() });
 };
 
 analytics.at = function (timepoint) {
-    var result = Q.defer();
     timepoint = Math.max(0, timepoint);
-    db.percentiles
+    return db.percentiles
         .find({ 'value.timepoint': { $lte: timepoint }})
         .sort({ 'value.timepoint': -1 })
         .limit(1)
-        .next(function (err, doc) {
-            if (err) {
-                result.reject(err);
-            } else if (!doc) {
-                result.reject(new Error("No data found at timepoint " + timepoint));
-            } else {
-                result.resolve(doc.value);
+        .next()
+        .then(function (doc) {
+            if (!doc) {
+                throw new Error("No data found at timepoint " + timepoint);
             }
+            return doc.value;
         });
-    return result.promise;
 };
 
 analytics.refreshAndGet = function (timepoint) {

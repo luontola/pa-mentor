@@ -2,7 +2,10 @@
 // This software is released under the Apache License 2.0.
 // The license text is at http://www.apache.org/licenses/LICENSE-2.0
 
+var Q = require('q');
+var _ = require('underscore');
 var config = require('./config');
+var games = require('./games');
 var analytics = require('./analytics');
 var rest = require('./rest');
 
@@ -30,12 +33,54 @@ updater.start = function () {
 };
 
 updater.update = function () {
-    var now = new Date().getTime();
-    var chunks = updater._chunks(now, config);
-    console.log(JSON.stringify(chunks, null, 2));
 
-    // TODO: fetch and save new games
-    return rest.getObject('http://www.nanodesu.info/pastats/report/winners?start=1386916400&duration=86400')
+    function persistGames(gameChunk) {
+        // TODO: combine the data from all service urls
+        return Q.all(_(gameChunk).map(function (game) {
+            return rest.getObject('http://www.nanodesu.info/pastats/report/get?gameId=' + game.gameId)
+                .then(games.save);
+        }));
+    }
+
+    function filterNewGames(gameChunk) {
+        return Q.all(_(gameChunk).map(function (game) {
+            return games.findById(game.gameId)
+                .then(function (persisted) {
+                    if (persisted) {
+                        return null;
+                    } else {
+                        return game;
+                    }
+                });
+        }));
+    }
+
+    function fetchGameChunk(chunk) {
+        return rest.getObject(updater._chunkToUrl(chunk));
+    }
+
+    function fetchChunksOfGames(chunks) {
+        var head = _.first(chunks);
+        var tail = _.rest(chunks);
+        if (!head) {
+            return Q(null);
+        }
+        return fetchGameChunk(head)
+            .then(filterNewGames)
+            .then(function (newGames) {
+                if (newGames.length === 0) {
+                    return null;
+                }
+                return persistGames(newGames)
+                    .then(function () {
+                        return tail ? fetchChunksOfGames(tail) : null;
+                    });
+            });
+    }
+
+    // TODO: find the newest game we have persisted and fetch games newer than it (delta ~1 day)
+    var chunks = updater._chunks(new Date().getTime(), config);
+    return fetchChunksOfGames(chunks)
         .then(analytics.refresh);
 };
 

@@ -4,6 +4,9 @@
 
 var assert = require('assert');
 var updater = require('../server/updater');
+var config = require('../server/config');
+var analytics = require('../server/analytics');
+var db = require('../server/db');
 
 describe('Updater:', function () {
 
@@ -27,5 +30,31 @@ describe('Updater:', function () {
     it("Converting a chunk to a service URL", function () {
         assert.equal('http://www.nanodesu.info/pastats/report/winners?start=123&duration=5',
             updater._chunkToUrl({start: 123111, duration: 5111}));
+    });
+
+    describe("After updating", function () {
+        this.timeout(10 * 1000);
+        before(function (done) {
+            config.samplingPeriod = 60 * 60 * 1000;
+            db.removeAll()
+                .then(updater.update)
+                .fin(done).done();
+        });
+
+        it("the database should have games", function (done) {
+            db.games.count()
+                .then(function (count) {
+                    assert.notEqual(0, count);
+                })
+                .fin(done).done();
+        });
+
+        it("the database should have game statistics", function (done) {
+            analytics.at(10000)
+                .then(function (stats) {
+                    assert.ok(stats.armyCount.values.length >= 1);
+                })
+                .fin(done).done()
+        });
     })
 });

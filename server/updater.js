@@ -30,9 +30,51 @@ updater.start = function () {
 };
 
 updater.update = function () {
+    var now = new Date().getTime();
+    var chunks = updater._chunks(now, config);
+    console.log(JSON.stringify(chunks, null, 2));
+
     // TODO: fetch and save new games
     return rest.getObject('http://www.nanodesu.info/pastats/report/winners?start=1386916400&duration=86400')
         .then(analytics.refresh);
 };
+
+
+updater._chunks = function (now, config) {
+    var startLimit = now - config.samplingPeriod;
+    var end = now;
+    var step = config.samplingChunkSize;
+
+    function nextChunk() {
+        var start = Math.max(startLimit, end - step);
+        var duration = Math.max(0, end - start);
+        if (duration === 0) {
+            return null;
+        }
+        end = start;
+        return {
+            start: start,
+            duration: duration
+        };
+    }
+
+    var chunks = [];
+    var chunk;
+    while (chunk = nextChunk()) {
+        chunks.push(chunk);
+    }
+    return chunks;
+};
+
+function millisToSeconds(millis) {
+    return (millis / 1000).toFixed();
+}
+
+updater._chunkToUrl = function (chunk) {
+    var start = millisToSeconds(chunk.start);
+    var duration = millisToSeconds(chunk.duration);
+    return 'http://www.nanodesu.info/pastats/report/winners?start=' + start + '&duration=' + duration;
+};
+
 
 module.exports = updater;

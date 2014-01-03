@@ -35,9 +35,19 @@ updater.start = function () {
 updater.update = function () {
 
     function persistGames(gameChunk) {
+        var gameIds = _(gameChunk).map(function (game) {
+            var gameId = game.gameId;
+            if (!gameId) {
+                throw new Error("Has no gameId: " + JSON.stringify(game));
+            }
+            return  gameId;
+        });
+
+        console.info("Fetching %s games: %s", gameIds.length, gameIds);
+
         // TODO: combine the data from all service urls
-        return Q.all(_(gameChunk).map(function (game) {
-            return rest.getObject('http://www.nanodesu.info/pastats/report/get?gameId=' + game.gameId)
+        return Q.all(_(gameIds).map(function (gameId) {
+            return rest.getObject('http://www.nanodesu.info/pastats/report/get?gameId=' + gameId)
                 .then(games.save);
         }));
     }
@@ -46,17 +56,15 @@ updater.update = function () {
         return Q.all(_(gameChunk).map(function (game) {
             return games.findById(game.gameId)
                 .then(function (persisted) {
-                    if (persisted) {
-                        return null;
-                    } else {
-                        return game;
-                    }
+                    return persisted ? [] : [game];
                 });
-        }));
+        })).then(_.flatten);
     }
 
     function fetchGameChunk(chunk) {
-        return rest.getObject(updater._chunkToUrl(chunk));
+        var url = updater._chunkToUrl(chunk);
+        console.info("Fetching game chunk %s", url);
+        return rest.getObject(url);
     }
 
     function fetchChunksOfGames(chunks) {
@@ -81,6 +89,9 @@ updater.update = function () {
     // TODO: find the newest game we have persisted and fetch games newer than it (delta ~1 day)
     var chunks = updater._chunks(new Date().getTime(), config);
     return fetchChunksOfGames(chunks)
+        .then(function () {
+            console.log("Refreshing analytics")
+        })
         .then(analytics.refresh);
 };
 

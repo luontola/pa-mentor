@@ -1,0 +1,21 @@
+
+- install on a server
+    - install nginx
+    - configure nginx to proxy apache
+    - install nodejs
+    - install mongodb
+    - create startup script for pamentor
+    - create subdomain
+    - configure nginx to proxy nodejs
+    - test that pamentor starts on reboot
+- publish a mod that uses that server
+    - figure out how to parameterize the URL
+    - create release scripts
+
+- fetch games from oldest to newest (in order to avoid gaps if some fetches fail)
+    - find out the newest game in database
+    - fetch from that (minus update interval and 1 day) upwards
+- group games based on the number of players in the team
+- filter games based on whether the player was in the winning team
+
+- locate the outlier games in the statistics (an army of 1393 at time 0 is unrealistic)

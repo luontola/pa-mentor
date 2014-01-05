@@ -46,9 +46,13 @@ pamentor = (function () {
 
     function changeStatsServerIfAvailable(newUrl) {
         $.get(newUrl)
-            .done(function () {
-                console.log("Switching to use %s for PA Mentor data", newUrl);
-                pamentor.statsServer = newUrl;
+            .done(function (data) {
+                if (data.indexOf('PA Mentor') >= 0) {
+                    console.log("Switching to use %s for PA Mentor data", newUrl);
+                    pamentor.statsServer = newUrl;
+                } else {
+                    console.log("%s looks foreign, so continuing to use %s for PA Mentor data", newUrl, pamentor.statsServer);
+                }
             })
             .fail(function () {
                 console.log("%s was unresponsive, so continuing to use %s for PA Mentor data", newUrl, pamentor.statsServer);

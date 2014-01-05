@@ -3,7 +3,8 @@ PA Mentor
 =========
 
 [Planetary Annihilation](http://www.uberent.com/pa/) mod showing how your
-in-game stats compare to other players.
+in-game stats compare to other players. The statistics are based on the
+data from [PA Stats](http://www.nanodesu.info/pastats/).
 
 
 Building
@@ -27,3 +28,20 @@ Running
 -------
 
     NODE_ENV=production node server
+
+
+Known Issues
+------------
+
+The statistics do not yet take into consideration that how many players are
+in a team; the comparisons are not really fair when comparing single player
+against a team of multiple players.
+
+
+Version History
+---------------
+
+### PA Mentor 0.1.0 (2014-01-05)
+
+- Shows how your unit count, metal and energy production and consumption
+compare to all other players based on PA Stats data

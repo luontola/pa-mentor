@@ -29,7 +29,7 @@ function update-json() {
     local key="$1"
     local value="$2"
     local file="$3"
-    sed -i -r -e "s/^(.*\"$key\": \").+(\".*)\$/\1$value\2/" "$file"
+    sed -i -r -e "s|^(.*\"$key\": \").+(\".*)\$|\1$value\2|" "$file"
     assert-file-contains-substring "$file" "\"$key\": \"$value\""
 }
 

@@ -1,21 +1,13 @@
 
-OK - install on a server
-    OK - install nginx
-    OK - configure nginx to proxy apache
-    OK - install nodejs
-    OK - install mongodb
-    OK - create startup script for pamentor
-    OK - create subdomain
-    OK - configure nginx to proxy nodejs
-    OK - test that pamentor starts on reboot
-OK - publish a mod that uses that server
-    OK - figure out how to parameterize the URL
-    OK - create release scripts
-
 - fetch games from oldest to newest (in order to avoid gaps if some fetches fail)
     - find out the newest game in database
     - fetch from that (minus update interval and 1 day) upwards
+
 - group games based on the number of players in the team
+
+- show application version on index page
+- make it easier to switch the backend server to use when developing, maybe detect automatically whether it's running on localhost?
+
 - filter games based on whether the player was in the winning team
 
 - locate the outlier games in the statistics (an army of 1393 at time 0 is unrealistic)

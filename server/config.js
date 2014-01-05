@@ -11,7 +11,7 @@ var config = {
     port: process.env.PA_MENTOR_PORT || 8080,
     dbUri: process.env.PA_MENTOR_DB_URI || 'mongodb://localhost:27017/paMentorTest',
     updateInterval: Math.max(SECOND, process.env.PA_MENTOR_UPDATE_INTERVAL || HOUR),
-    samplingPeriod: Math.max(SECOND, process.env.PA_MENTOR_SAMPLING_PERIOD || 30 * DAY),
+    samplingPeriod: Math.max(SECOND, process.env.PA_MENTOR_SAMPLING_PERIOD || 3 * DAY),
     samplingChunkSize: Math.max(SECOND, process.env.PA_MENTOR_SAMPLING_CHUNK_SIZE || DAY)
 };
 

@@ -1,8 +1,11 @@
-// Copyright © 2013 Esko Luontola <www.orfjackal.net>
+// Copyright © 2013-2014 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://www.apache.org/licenses/LICENSE-2.0
 
 pamentor = (function () {
+
+    const PROD_SERVER = 'http://pa-mentor.orfjackal.net';
+    const DEV_SERVER = 'http://127.0.0.1:8080';
 
     // Time
 
@@ -25,13 +28,32 @@ pamentor = (function () {
     // Stats
 
     pamentor.stats = ko.observable({});
-    pamentor.statsServer = 'http://127.0.0.1:8080';
+    pamentor.statsServer = PROD_SERVER;
+    changeStatsServerIfAvailable(DEV_SERVER);
+
     pamentor.updateStats = function () {
         $.getJSON(pamentor.statsServer + '/api/stats/' + pamentor.timeSincePlayStart(), function (stats) {
             pamentor.stats(stats);
         });
     };
     pamentor.variables = ko.observableArray();
+
+    initVariable('Unit Count', 'armyCount', model.armySize);
+    initVariable('Metal Income', 'metalIncome', model.metalGain);
+    initVariable('Metal Spending', 'metalSpending', model.metalLoss);
+    initVariable('Energy Income', 'energyIncome', model.energyGain);
+    initVariable('Energy Spending', 'energySpending', model.energyLoss);
+
+    function changeStatsServerIfAvailable(newUrl) {
+        $.get(newUrl)
+            .done(function () {
+                console.log("Switching to use %s for PA Mentor data", newUrl);
+                pamentor.statsServer = newUrl;
+            })
+            .fail(function () {
+                console.log("%s was unresponsive, so continuing to use %s for PA Mentor data", newUrl, pamentor.statsServer);
+            })
+    }
 
     function findPercentile(value, stats) {
         if (!stats) {
@@ -76,12 +98,6 @@ pamentor = (function () {
         pamentor[id] = variable;
         pamentor.variables.push(variable);
     }
-
-    initVariable('Unit Count', 'armyCount', model.armySize);
-    initVariable('Metal Income', 'metalIncome', model.metalGain);
-    initVariable('Metal Spending', 'metalSpending', model.metalLoss);
-    initVariable('Energy Income', 'energyIncome', model.energyGain);
-    initVariable('Energy Spending', 'energySpending', model.energyLoss);
 
     return pamentor;
 })();

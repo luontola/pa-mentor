@@ -2,6 +2,8 @@
 - fetch games from oldest to newest (in order to avoid gaps if some fetches fail)
     - find out the newest game in database
     - fetch from that (minus update interval and 1 day) upwards
+- make the updater smarter; don't to a analytics update on server start, but based on the last time when it was done
+- save database version in database, run upgrade on startup when necessary
 
 - group games based on the number of players in the team
 

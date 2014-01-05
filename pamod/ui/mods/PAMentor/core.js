@@ -25,7 +25,7 @@ pamentor = (function () {
     // Stats
 
     pamentor.stats = ko.observable({});
-    pamentor.statsServer = 'http://127.0.0.1:8080'; // TODO: change to the production URL when done
+    pamentor.statsServer = 'http://127.0.0.1:8080';
     pamentor.updateStats = function () {
         $.getJSON(pamentor.statsServer + '/api/stats/' + pamentor.timeSincePlayStart(), function (stats) {
             pamentor.stats(stats);

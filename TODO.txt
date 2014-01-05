@@ -1,16 +1,16 @@
 
-- install on a server
-    - install nginx
-    - configure nginx to proxy apache
-    - install nodejs
-    - install mongodb
-    - create startup script for pamentor
-    - create subdomain
-    - configure nginx to proxy nodejs
-    - test that pamentor starts on reboot
-- publish a mod that uses that server
-    - figure out how to parameterize the URL
-    - create release scripts
+OK - install on a server
+    OK - install nginx
+    OK - configure nginx to proxy apache
+    OK - install nodejs
+    OK - install mongodb
+    OK - create startup script for pamentor
+    OK - create subdomain
+    OK - configure nginx to proxy nodejs
+    OK - test that pamentor starts on reboot
+OK - publish a mod that uses that server
+    OK - figure out how to parameterize the URL
+    OK - create release scripts
 
 - fetch games from oldest to newest (in order to avoid gaps if some fetches fail)
     - find out the newest game in database

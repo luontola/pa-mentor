@@ -1,13 +1,14 @@
 
 OK - make it easier to switch the backend server to use when developing, maybe detect automatically whether it's running on localhost?
 
+OK - reduce server load: store less history (14d), update less often (12h)
+
 - fetch games from oldest to newest (in order to avoid gaps if some fetches fail)
     - find out the newest game in database
     - fetch from that (minus update interval and 1 day) upwards
 - make the updater smarter; don't to a analytics update on server start, but based on the last time when it was done
 - save database version in database, run data migration (regeneration) on startup when necessary
 - remove old games from database
-- reduce server load: store less history (14d), update less often (12h)
 
 - group games based on the number of players in the team
 

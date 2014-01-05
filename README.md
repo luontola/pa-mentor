@@ -43,6 +43,10 @@ against a team of multiple players.
 Version History
 ---------------
 
+### Upcoming
+
+- Will automatically detect and use a backend running on localhost
+
 ### PA Mentor 0.1.0 (2014-01-05)
 
 - Shows how your unit count, metal and energy production and consumption

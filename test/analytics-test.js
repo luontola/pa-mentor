@@ -1,4 +1,4 @@
-// Copyright © 2013 Esko Luontola <www.orfjackal.net>
+// Copyright © 2013-2014 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://www.apache.org/licenses/LICENSE-2.0
 
@@ -153,7 +153,7 @@ describe('Analytics:', function () {
                 }
             ];
 
-            var results = analytics._reduce(5000, entries);
+            var results = analytics._finalize(5000, analytics._reduce(5000, entries));
 
             assert.deepEqual({
                 timepoint: 5000,
@@ -171,7 +171,7 @@ describe('Analytics:', function () {
                 someStatValue(30)
             ];
 
-            var results = analytics._reduce(0, entries);
+            var results = analytics._finalize(5000, analytics._reduce(0, entries));
 
             assert.deepEqual({
                 timepoint: 0,
@@ -189,7 +189,7 @@ describe('Analytics:', function () {
                 someStatValue(2)
             ];
 
-            var results = analytics._reduce(0, entries);
+            var results = analytics._finalize(5000, analytics._reduce(0, entries));
 
             assert.deepEqual([1, 2, 10], results.someStat.values);
         });
@@ -202,7 +202,7 @@ describe('Analytics:', function () {
                 someStatValue(2)
             ];
 
-            var results = analytics._reduce(0, entries);
+            var results = analytics._finalize(5000, analytics._reduce(0, entries));
 
             assert.deepEqual({
                 timepoint: 0,
@@ -219,13 +219,39 @@ describe('Analytics:', function () {
                 entries.push(someStatValue(10 * i)); // two values for each percentile
             }
 
-            var results = analytics._reduce(0, entries);
+            var results = analytics._finalize(5000, analytics._reduce(0, entries));
 
             assert.deepEqual([1, 2, 3, 4, 5], results.someStat.percentiles.slice(0, 5));
             assert.deepEqual([20, 40, 60, 80, 100], results.someStat.values.slice(0, 5));
             assert.deepEqual([96, 97, 98, 99, 100], results.someStat.percentiles.slice(95, 100));
             assert.deepEqual([1920, 1940, 1960, 1980, 2000], results.someStat.values.slice(95, 100));
         });
+
+        describe("Satisfies the requirements for a reduce function", function () {
+            // See http://docs.mongodb.org/manual/reference/command/mapReduce/#requirements-for-the-reduce-function
+            var A = someStatValue(Math.floor(Math.random() * 3 + 1));
+            var B = someStatValue(Math.floor(Math.random() * 3 + 1));
+            var C = someStatValue(Math.floor(Math.random() * 3 + 1));
+
+            it("The type of the return object must be identical to the type of the value emitted by the map function", function () {
+                assert.deepEqual(
+                    analytics._reduce(0, [C, analytics._reduce(0, [A, B])]),
+                    analytics._reduce(0, [C, A, B])
+                );
+            });
+            it("Must be idempotent", function () {
+                assert.deepEqual(
+                    analytics._reduce(0, [analytics._reduce(0, [A, B, C])]),
+                    analytics._reduce(0, [A, B, C])
+                );
+            });
+            it("the order of the elements in the valuesArray should not affect the output of the reduce function", function () {
+                assert.deepEqual(
+                    analytics._reduce(0, [A, B]),
+                    analytics._reduce(0, [B, A])
+                );
+            });
+        })
     });
 
     describe("#at()", function () {

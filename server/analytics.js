@@ -49,6 +49,38 @@ analytics._reduce = function (id, entries) {
         return a - b;
     }
 
+    function sortValues(entry) {
+        entry.values.sort(compareNumbers);
+        return entry;
+    }
+
+    var reduced = {};
+    for (var i = 0; i < entries.length; i++) {
+        var entry = entries[i];
+        for (var property in entry) {
+            if (entry.hasOwnProperty(property)) {
+
+                if (property === 'timepoint') {
+                    reduced[property] = entry[property];
+                } else {
+                    var target = reduced[property] = (reduced[property] || { values: [] });
+                    entry[property].values.forEach(function (value) {
+                        target.values.push(value);
+                    });
+                }
+            }
+        }
+    }
+    for (var property in reduced) {
+        if (reduced.hasOwnProperty(property) && reduced[property].values) {
+            sortValues(reduced[property]);
+        }
+    }
+    return reduced;
+};
+
+analytics._finalize = function (id, merged) {
+
     function deduplicate(values, percentiles) {
         for (var i = 0; i < values.length - 1; i++) {
             if (values[i] === values[i + 1] || percentiles[i] === percentiles[i + 1]) {
@@ -59,8 +91,7 @@ analytics._reduce = function (id, entries) {
         }
     }
 
-    function recalculatePercentiles(entry) {
-        entry.values.sort(compareNumbers);
+    function calculatePercentiles(entry) {
         var percentiles = [];
         var count = entry.values.length;
         for (var i = 0; i < count; i++) {
@@ -71,33 +102,22 @@ analytics._reduce = function (id, entries) {
         return entry;
     }
 
-    var merged = {};
-    for (var i = 0; i < entries.length; i++) {
-        var entry = entries[i];
-        for (var property in entry) {
-            if (entry.hasOwnProperty(property)) {
-
-                if (property === 'timepoint') {
-                    merged[property] = entry[property];
-                } else {
-                    var target = merged[property] = (merged[property] || { values: [] });
-                    entry[property].values.forEach(function (value) {
-                        target.values.push(value);
-                    });
-                }
-            }
-        }
-    }
     for (var property in merged) {
         if (merged.hasOwnProperty(property) && merged[property].values) {
-            recalculatePercentiles(merged[property]);
+            calculatePercentiles(merged[property]);
         }
     }
     return merged;
 };
 
 analytics.refresh = function () {
-    return db.games.mapReduce(analytics._map, analytics._reduce, { out: db.percentiles.name() });
+    return db.games.mapReduce(
+        analytics._map,
+        analytics._reduce,
+        {
+            out: db.percentiles.name(),
+            finalize: analytics._finalize
+        });
 };
 
 analytics.at = function (timepoint) {

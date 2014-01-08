@@ -46,6 +46,7 @@ Version History
 ### Upcoming
 
 - Will automatically detect and use a backend running on localhost
+- Fixed an incorrect calculation in the map-reduce functions
 
 ### PA Mentor 0.1.0 (2014-01-05)
 

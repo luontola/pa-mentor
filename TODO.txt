@@ -17,3 +17,8 @@ OK - show application version on index page
 - filter games based on whether the player was in the winning team
 
 - locate the outlier games in the statistics (an army of 1393 at time 0 is unrealistic)
+
+- consider making the deploy process pull updates from github instead of them being pushed
+    - this would avoid the need to push tags to show the version number
+        http://stackoverflow.com/questions/2988088/do-git-tags-get-pushed-as-well
+        http://stackoverflow.com/questions/19814323/pushing-metadata-say-via-tags-notes-automatically-in-git-w-o-using-a-client

@@ -87,7 +87,7 @@ updater.update = function () {
     }
 
     // TODO: find the newest game we have persisted and fetch games newer than it (delta ~1 day)
-    var chunks = updater._chunks(new Date().getTime(), config);
+    var chunks = updater._chunks(Date.now(), config);
     return fetchChunksOfGames(chunks)
         .then(function () {
             console.log("Refreshing analytics")

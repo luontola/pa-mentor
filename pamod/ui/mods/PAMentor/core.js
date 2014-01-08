@@ -12,13 +12,12 @@ pamentor = (function () {
     var pamentor = {};
     pamentor.timesyncWallTime = ko.observable(0);
     pamentor.timesyncGameTime = ko.computed(function () {
-        pamentor.timesyncWallTime(new Date().getTime());
+        pamentor.timesyncWallTime(Date.now());
         return Math.round(model.currentTimeInSeconds() * 1000);
     });
     pamentor.timeSincePlayStart = ko.observable(0);
     pamentor._timeSincePlayStart = function () {
-        var now = new Date().getTime();
-        var diff = now - pamentor.timesyncWallTime();
+        var diff = Date.now() - pamentor.timesyncWallTime();
         return diff + pamentor.timesyncGameTime();
     };
     pamentor.updateClock = function () {

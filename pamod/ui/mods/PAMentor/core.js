@@ -13,7 +13,7 @@ pamentor = (function () {
     pamentor.timesyncWallTime = ko.observable(0);
     pamentor.timesyncGameTime = ko.computed(function () {
         pamentor.timesyncWallTime(new Date().getTime());
-        return model.currentTimeInSeconds() * 1000;
+        return Math.round(model.currentTimeInSeconds() * 1000);
     });
     pamentor.timeSincePlayStart = ko.observable(0);
     pamentor._timeSincePlayStart = function () {

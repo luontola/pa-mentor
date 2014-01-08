@@ -9,14 +9,11 @@ var analytics = {};
 
 analytics._map = function () {
 
-    function convert(entry) {
+    function convertVariablesToLists(entry) {
         var result = {};
         for (var property in entry) {
             if (entry.hasOwnProperty(property) && property !== 'timepoint') {
-                result[property] = {
-                    values: [ entry[property] ],
-                    percentiles: [ 100 ]
-                };
+                result[property] = [ entry[property] ];
             }
         }
         return result;
@@ -35,7 +32,7 @@ analytics._map = function () {
                 startTime = startTime || entry.timepoint;
                 var relativeTime = entry.timepoint - startTime;
 
-                var result = convert(entry);
+                var result = convertVariablesToLists(entry);
                 result.timepoint = roundByMultiple(relativeTime, 5000);
                 emit(result.timepoint, result);
             })
@@ -49,33 +46,34 @@ analytics._reduce = function (id, entries) {
         return a - b;
     }
 
-    function sortValues(entry) {
-        entry.values.sort(compareNumbers);
-        return entry;
-    }
-
-    var reduced = {};
-    for (var i = 0; i < entries.length; i++) {
-        var entry = entries[i];
-        for (var property in entry) {
-            if (entry.hasOwnProperty(property)) {
-
-                if (property === 'timepoint') {
-                    reduced[property] = entry[property];
-                } else {
-                    var target = reduced[property] = (reduced[property] || { values: [] });
-                    entry[property].values.forEach(function (value) {
-                        target.values.push(value);
+    function copyOrAppendProperties(dest, src) {
+        for (var property in src) {
+            if (src.hasOwnProperty(property)) {
+                if (src[property].length) {
+                    var values = dest[property] = (dest[property] || []);
+                    src[property].forEach(function (value) {
+                        values.push(value);
                     });
+                } else {
+                    dest[property] = src[property];
                 }
             }
         }
     }
-    for (var property in reduced) {
-        if (reduced.hasOwnProperty(property) && reduced[property].values) {
-            sortValues(reduced[property]);
+
+    function sortListProperties(obj) {
+        for (var property in obj) {
+            if (obj.hasOwnProperty(property) && obj[property].length) {
+                obj[property].sort(compareNumbers);
+            }
         }
     }
+
+    var reduced = {};
+    for (var i = 0; i < entries.length; i++) {
+        copyOrAppendProperties(reduced, entries[i]);
+    }
+    sortListProperties(reduced);
     return reduced;
 };
 
@@ -91,20 +89,19 @@ analytics._finalize = function (id, merged) {
         }
     }
 
-    function calculatePercentiles(entry) {
+    function calculatePercentiles(values) {
         var percentiles = [];
-        var count = entry.values.length;
+        var count = values.length;
         for (var i = 0; i < count; i++) {
             percentiles.push(Math.round(100 * (i + 1) / count)); // "a*c/b" instead of "a/(b/c)" produces more accurate fractions
         }
-        deduplicate(entry.values, percentiles);
-        entry.percentiles = percentiles;
-        return entry;
+        deduplicate(values, percentiles);
+        return { values: values, percentiles: percentiles };
     }
 
     for (var property in merged) {
-        if (merged.hasOwnProperty(property) && merged[property].values) {
-            calculatePercentiles(merged[property]);
+        if (merged.hasOwnProperty(property) && merged[property].length) {
+            merged[property] = calculatePercentiles(merged[property]);
         }
     }
     return merged;

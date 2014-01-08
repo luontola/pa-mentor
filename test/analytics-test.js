@@ -9,13 +9,7 @@ var games = require('../server/games');
 var db = require('../server/db');
 
 function someStatValue(value) {
-    return {
-        timepoint: 0,
-        someStat: {
-            values: [value],
-            percentiles: [100]
-        }
-    };
+    return { timepoint: 0, someStat: [value] };
 }
 
 describe('Analytics:', function () {
@@ -43,20 +37,9 @@ describe('Analytics:', function () {
 
             analytics._map.apply(game);
 
-            assert.deepEqual([0, {
-                timepoint: 0,
-                stat1: { values: [1], percentiles: [100] }
-            }], emit.getCall(0).args);
-
-            assert.deepEqual([5000, {
-                timepoint: 5000,
-                stat1: { values: [2], percentiles: [100] }
-            }], emit.getCall(1).args);
-
-            assert.deepEqual([10000, {
-                timepoint: 10000,
-                stat1: { values: [3], percentiles: [100] }
-            }], emit.getCall(2).args);
+            assert.deepEqual([0, { timepoint: 0, stat1: [1] }], emit.getCall(0).args);
+            assert.deepEqual([5000, { timepoint: 5000, stat1: [2] }], emit.getCall(1).args);
+            assert.deepEqual([10000, { timepoint: 10000, stat1: [3] }], emit.getCall(2).args);
         });
 
         it("Emits multiple stats", function () {
@@ -70,11 +53,7 @@ describe('Analytics:', function () {
 
             analytics._map.apply(game);
 
-            assert.deepEqual([0, {
-                timepoint: 0,
-                stat1: { values: [1], percentiles: [100] },
-                stat2: { values: [10], percentiles: [100] }
-            }], emit.getCall(0).args);
+            assert.deepEqual([0, { timepoint: 0, stat1: [1], stat2: [10] }], emit.getCall(0).args);
         });
 
         it("Emits multiple players, each with their own local time", function () {
@@ -92,15 +71,8 @@ describe('Analytics:', function () {
 
             analytics._map.apply(game);
 
-            assert.deepEqual([0, {
-                timepoint: 0,
-                stat1: { values: [1], percentiles: [100] }
-            }], emit.getCall(0).args);
-
-            assert.deepEqual([0, {
-                timepoint: 0,
-                stat1: { values: [2], percentiles: [100] }
-            }], emit.getCall(1).args);
+            assert.deepEqual([0, { timepoint: 0, stat1: [1] }], emit.getCall(0).args);
+            assert.deepEqual([0, { timepoint: 0, stat1: [2] }], emit.getCall(1).args);
         });
 
         it("Rounds timepoints to 5 seconds", function () {
@@ -116,49 +88,23 @@ describe('Analytics:', function () {
 
             analytics._map.apply(game);
 
-            assert.deepEqual([0, {
-                timepoint: 0,
-                stat1: { values: [1], percentiles: [100] }
-            }], emit.getCall(0).args);
-
-            assert.deepEqual([5000, {
-                timepoint: 5000,
-                stat1: { values: [2], percentiles: [100] }
-            }], emit.getCall(1).args);
-
-            assert.deepEqual([10000, {
-                timepoint: 10000,
-                stat1: { values: [3], percentiles: [100] }
-            }], emit.getCall(2).args);
+            assert.deepEqual([0, { timepoint: 0, stat1: [1] }], emit.getCall(0).args);
+            assert.deepEqual([5000, { timepoint: 5000, stat1: [2] }], emit.getCall(1).args);
+            assert.deepEqual([10000, { timepoint: 10000, stat1: [3] }], emit.getCall(2).args);
         });
     });
 
     describe("#_reduce()", function () {
 
-        it("Merges sorted values", function () {
+        it("Keeps timepoint and merges sorted values", function () {
             var entries = [
-                {
-                    timepoint: 5000,
-                    someStat: {
-                        values: [1, 3]
-                    }
-                },
-                {
-                    timepoint: 5000,
-                    someStat: {
-                        values: [2, 4]
-                    }
-                }
+                { timepoint: 5000, someStat: [1, 3] },
+                { timepoint: 5000, someStat: [2, 4] }
             ];
 
-            var results = analytics._reduce(5000, entries);
+            var results = analytics._reduce(0, entries);
 
-            assert.deepEqual({
-                timepoint: 5000,
-                someStat: {
-                    values: [1, 2, 3, 4]
-                }
-            }, results);
+            assert.deepEqual({ timepoint: 5000, someStat: [1, 2, 3, 4] }, results);
         });
 
         it("Sorting uses numeric sort, not lexical sort", function () {
@@ -168,9 +114,9 @@ describe('Analytics:', function () {
                 someStatValue(2)
             ];
 
-            var results = analytics._finalize(5000, analytics._reduce(0, entries));
+            var results = analytics._reduce(0, entries);
 
-            assert.deepEqual([1, 2, 10], results.someStat.values);
+            assert.deepEqual([1, 2, 10], results.someStat);
         });
 
         // See http://docs.mongodb.org/manual/reference/command/mapReduce/#requirements-for-the-reduce-function
@@ -203,12 +149,7 @@ describe('Analytics:', function () {
     describe("#_finalize()", function () {
 
         it("Calculates percentiles", function () {
-            var entry = {
-                timepoint: 5000,
-                someStat: {
-                    values: [1, 2, 3, 4]
-                }
-            };
+            var entry = { timepoint: 5000, someStat: [1, 2, 3, 4] };
 
             var results = analytics._finalize(0, entry);
 
@@ -222,12 +163,7 @@ describe('Analytics:', function () {
         });
 
         it("Percentiles are always rounded to full percentages", function () {
-            var entry = {
-                timepoint: 0,
-                someStat: {
-                    values: [10, 20, 30]
-                }
-            };
+            var entry = { timepoint: 0, someStat: [10, 20, 30] };
 
             var results = analytics._finalize(0, entry);
 
@@ -241,12 +177,7 @@ describe('Analytics:', function () {
         });
 
         it("Combines repeated values into one", function () {
-            var entry = {
-                timepoint: 0,
-                someStat: {
-                    values: [1, 1, 1, 2]
-                }
-            };
+            var entry = { timepoint: 0, someStat: [1, 1, 1, 2] };
 
             var results = analytics._finalize(0, entry);
 
@@ -264,12 +195,7 @@ describe('Analytics:', function () {
             for (var i = 1; i <= 200; i++) {
                 values.push(10 * i); // two values for each percentile
             }
-            var entry = {
-                timepoint: 0,
-                someStat: {
-                    values: values
-                }
-            };
+            var entry = { timepoint: 0, someStat: values };
 
             var results = analytics._finalize(0, entry);
 

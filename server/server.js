@@ -1,10 +1,11 @@
-// Copyright © 2013 Esko Luontola <www.orfjackal.net>
+// Copyright © 2013-2014 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://www.apache.org/licenses/LICENSE-2.0
 
 var Q = require('q');
 var http = require('http');
 var express = require('express');
+var child_process = require('child_process');
 var _ = require('underscore');
 var analytics = require('./analytics');
 var config = require('./config');
@@ -37,8 +38,11 @@ function getApiDocs() {
 var server = express();
 
 server.get('/', function (req, res) {
-    res.setHeader('Content-Type', 'text/plain');
-    res.send('PA Mentor');
+    child_process.exec('git describe --dirty --always', { timeout: 10000 }, function (err, stdout) {
+        var version = err ? '' : ' ' + stdout;
+        res.setHeader('Content-Type', 'text/plain');
+        res.send('PA Mentor' + version);
+    });
 });
 
 server.get('/api', function (req, res) {

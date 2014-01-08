@@ -3,6 +3,8 @@ OK - make it easier to switch the backend server to use when developing, maybe d
 
 OK - reduce server load: store less history (14d), update less often (12h)
 
+OK - show application version on index page
+
 - fetch games from oldest to newest (in order to avoid gaps if some fetches fail)
     - find out the newest game in database
     - fetch from that (minus update interval and 1 day) upwards
@@ -11,8 +13,6 @@ OK - reduce server load: store less history (14d), update less often (12h)
 - remove old games from database
 
 - group games based on the number of players in the team
-
-- show application version on index page
 
 - filter games based on whether the player was in the winning team
 

@@ -135,49 +135,28 @@ describe('Analytics:', function () {
 
     describe("#_reduce()", function () {
 
-        it("Merges sorted values and re-calculates percentiles", function () {
+        it("Merges sorted values", function () {
             var entries = [
                 {
                     timepoint: 5000,
                     someStat: {
-                        values: [1, 3],
-                        percentiles: [50, 100]
+                        values: [1, 3]
                     }
                 },
                 {
                     timepoint: 5000,
                     someStat: {
-                        values: [2, 4],
-                        percentiles: [50, 100]
+                        values: [2, 4]
                     }
                 }
             ];
 
-            var results = analytics._finalize(5000, analytics._reduce(5000, entries));
+            var results = analytics._reduce(5000, entries);
 
             assert.deepEqual({
                 timepoint: 5000,
                 someStat: {
-                    values: [1, 2, 3, 4],
-                    percentiles: [25, 50, 75, 100]
-                }
-            }, results);
-        });
-
-        it("Percentiles are always rounded to full percentages", function () {
-            var entries = [
-                someStatValue(10),
-                someStatValue(20),
-                someStatValue(30)
-            ];
-
-            var results = analytics._finalize(5000, analytics._reduce(0, entries));
-
-            assert.deepEqual({
-                timepoint: 0,
-                someStat: {
-                    values: [10, 20, 30],
-                    percentiles: [33, 67, 100]
+                    values: [1, 2, 3, 4]
                 }
             }, results);
         });
@@ -194,41 +173,8 @@ describe('Analytics:', function () {
             assert.deepEqual([1, 2, 10], results.someStat.values);
         });
 
-        it("Combines repeated values into one", function () {
-            var entries = [
-                someStatValue(1),
-                someStatValue(1),
-                someStatValue(1),
-                someStatValue(2)
-            ];
-
-            var results = analytics._finalize(5000, analytics._reduce(0, entries));
-
-            assert.deepEqual({
-                timepoint: 0,
-                someStat: {
-                    values: [1, 2],
-                    percentiles: [75, 100]
-                }
-            }, results);
-        });
-
-        it("Combines repeated percentiles into one", function () {
-            var entries = [];
-            for (var i = 1; i <= 200; i++) {
-                entries.push(someStatValue(10 * i)); // two values for each percentile
-            }
-
-            var results = analytics._finalize(5000, analytics._reduce(0, entries));
-
-            assert.deepEqual([1, 2, 3, 4, 5], results.someStat.percentiles.slice(0, 5));
-            assert.deepEqual([20, 40, 60, 80, 100], results.someStat.values.slice(0, 5));
-            assert.deepEqual([96, 97, 98, 99, 100], results.someStat.percentiles.slice(95, 100));
-            assert.deepEqual([1920, 1940, 1960, 1980, 2000], results.someStat.values.slice(95, 100));
-        });
-
+        // See http://docs.mongodb.org/manual/reference/command/mapReduce/#requirements-for-the-reduce-function
         describe("Satisfies the requirements for a reduce function", function () {
-            // See http://docs.mongodb.org/manual/reference/command/mapReduce/#requirements-for-the-reduce-function
             var A = someStatValue(Math.floor(Math.random() * 3 + 1));
             var B = someStatValue(Math.floor(Math.random() * 3 + 1));
             var C = someStatValue(Math.floor(Math.random() * 3 + 1));
@@ -252,6 +198,86 @@ describe('Analytics:', function () {
                 );
             });
         })
+    });
+
+    describe("#_finalize()", function () {
+
+        it("Calculates percentiles", function () {
+            var entry = {
+                timepoint: 5000,
+                someStat: {
+                    values: [1, 2, 3, 4]
+                }
+            };
+
+            var results = analytics._finalize(0, entry);
+
+            assert.deepEqual({
+                timepoint: 5000,
+                someStat: {
+                    values: [1, 2, 3, 4],
+                    percentiles: [25, 50, 75, 100]
+                }
+            }, results);
+        });
+
+        it("Percentiles are always rounded to full percentages", function () {
+            var entry = {
+                timepoint: 0,
+                someStat: {
+                    values: [10, 20, 30]
+                }
+            };
+
+            var results = analytics._finalize(0, entry);
+
+            assert.deepEqual({
+                timepoint: 0,
+                someStat: {
+                    values: [10, 20, 30],
+                    percentiles: [33, 67, 100]
+                }
+            }, results);
+        });
+
+        it("Combines repeated values into one", function () {
+            var entry = {
+                timepoint: 0,
+                someStat: {
+                    values: [1, 1, 1, 2]
+                }
+            };
+
+            var results = analytics._finalize(0, entry);
+
+            assert.deepEqual({
+                timepoint: 0,
+                someStat: {
+                    values: [1, 2],
+                    percentiles: [75, 100]
+                }
+            }, results);
+        });
+
+        it("Combines repeated percentiles into one", function () {
+            var values = [];
+            for (var i = 1; i <= 200; i++) {
+                values.push(10 * i); // two values for each percentile
+            }
+            var entry = {
+                timepoint: 0,
+                someStat: {
+                    values: values
+                }
+            };
+
+            var results = analytics._finalize(0, entry);
+
+            assert.deepEqual([1, 2, 3, 4, 5], results.someStat.percentiles.slice(0, 5));
+            assert.deepEqual([20, 40, 60, 80, 100], results.someStat.values.slice(0, 5));
+            assert.deepEqual([96, 97, 98, 99, 100], results.someStat.percentiles.slice(95, 100));
+            assert.deepEqual([1920, 1940, 1960, 1980, 2000], results.someStat.values.slice(95, 100));
+        });
     });
 
     describe("#at()", function () {

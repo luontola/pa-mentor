@@ -8,6 +8,7 @@ var db = require('./db');
 var analytics = {};
 
 analytics._map = function () {
+    var game = this;
 
     function convertVariablesToLists(entry) {
         var result = {};
@@ -23,7 +24,7 @@ analytics._map = function () {
         return Math.round(n / multiple) * multiple
     }
 
-    var playerTimeData = this.playerTimeData;
+    var playerTimeData = game.playerTimeData;
     for (var playerId in  playerTimeData) {
         if (playerTimeData.hasOwnProperty(playerId)) {
             var entries = playerTimeData[playerId];
@@ -35,6 +36,11 @@ analytics._map = function () {
                 var result = convertVariablesToLists(entry);
                 result.timepoint = roundByMultiple(relativeTime, 5000);
                 emit(result.timepoint, result);
+
+                // TODO: remove this debug logging after locating the funny games
+                if (result.timepoint === 0 && entry.armyCount > 100) {
+                    print("Game", game.gameId, "had armyCount", entry.armyCount, "at timepoint", entry.timepoint, "/ relativeTime", relativeTime);
+                }
             })
         }
     }

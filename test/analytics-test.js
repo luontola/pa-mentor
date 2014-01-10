@@ -204,6 +204,24 @@ describe('Analytics:', function () {
             assert.deepEqual([96, 97, 98, 99, 100], results.someStat.percentiles.slice(95, 100));
             assert.deepEqual([1920, 1940, 1960, 1980, 2000], results.someStat.values.slice(95, 100));
         });
+
+        it("Bugfix: All but the highest value disappearing on deduplication when lots of values", function () {
+            // In this data the last 1 belongs to the 100th percentile, but so do also 2 and 3.
+            // The deduplication algorithm had a bug which in this case removed all signs of 1 and 2.
+            // Instead it should mark 1 as 99th percentile and 3 as 100th percentile, removing only 2.
+            var values = [];
+            for (var i = 0; i < 298; i++) {
+                values.push(1);
+            }
+            values.push(2);
+            values.push(3);
+            var entry = { timepoint: 0, someStat: values };
+
+            var results = analytics._finalize(0, entry);
+
+            assert.deepEqual([99, 100], results.someStat.percentiles);
+            assert.deepEqual([1, 3], results.someStat.values);
+        });
     });
 
     describe("#at()", function () {

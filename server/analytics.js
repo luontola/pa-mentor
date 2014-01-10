@@ -83,13 +83,24 @@ analytics._reduce = function (id, entries) {
     return reduced;
 };
 
-analytics._finalize = function (id, merged) {
+analytics._finalize = function (id, entry) {
 
     function deduplicate(values, percentiles) {
+
+        function removeIndex(i) {
+            values.splice(i, 1);
+            percentiles.splice(i, 1);
+        }
+
         for (var i = 0; i < values.length - 1; i++) {
-            if (values[i] === values[i + 1] || percentiles[i] === percentiles[i + 1]) {
-                values.splice(i, 1);
-                percentiles.splice(i, 1);
+            if (values[i] === values[i + 1]) {
+                removeIndex(i);
+                i--;
+            }
+        }
+        for (var i = 0; i < values.length - 1; i++) {
+            if (percentiles[i] === percentiles[i + 1]) {
+                removeIndex(i);
                 i--;
             }
         }
@@ -105,12 +116,12 @@ analytics._finalize = function (id, merged) {
         return { values: values, percentiles: percentiles };
     }
 
-    for (var property in merged) {
-        if (merged.hasOwnProperty(property) && merged[property].length) {
-            merged[property] = calculatePercentiles(merged[property]);
+    for (var property in entry) {
+        if (entry.hasOwnProperty(property) && entry[property].length) {
+            entry[property] = calculatePercentiles(entry[property]);
         }
     }
-    return merged;
+    return entry;
 };
 
 analytics.refresh = function () {

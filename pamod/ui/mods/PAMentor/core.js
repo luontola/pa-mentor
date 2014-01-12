@@ -2,10 +2,12 @@
 // This software is released under the Apache License 2.0.
 // The license text is at http://www.apache.org/licenses/LICENSE-2.0
 
-pamentor = (function () {
+"use strict";
 
-    const PROD_SERVER = 'http://pa-mentor.orfjackal.net';
-    const DEV_SERVER = 'http://127.0.0.1:8080';
+var pamentor = (function () {
+
+    var PROD_SERVER = 'http://pa-mentor.orfjackal.net';
+    var DEV_SERVER = 'http://127.0.0.1:8080';
 
     // Time
 

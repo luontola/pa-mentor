@@ -2,6 +2,8 @@
 // This software is released under the Apache License 2.0.
 // The license text is at http://www.apache.org/licenses/LICENSE-2.0
 
+"use strict";
+
 var Q = require('q');
 var http = require('http');
 var express = require('express');

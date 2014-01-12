@@ -2,10 +2,12 @@
 // This software is released under the Apache License 2.0.
 // The license text is at http://www.apache.org/licenses/LICENSE-2.0
 
-const SECOND = 1000;
-const MINUTE = 60 * SECOND;
-const HOUR = 60 * MINUTE;
-const DAY = 24 * HOUR;
+"use strict";
+
+var SECOND = 1000;
+var MINUTE = 60 * SECOND;
+var HOUR = 60 * MINUTE;
+var DAY = 24 * HOUR;
 
 var config = {
     port: process.env.PA_MENTOR_PORT || 8080,

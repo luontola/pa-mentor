@@ -2,12 +2,15 @@
 // This software is released under the Apache License 2.0.
 // The license text is at http://www.apache.org/licenses/LICENSE-2.0
 
+"use strict";
+
 var Q = require('q');
 var db = require('./db');
 
 var analytics = {};
 
 analytics._map = function () {
+    "use strict";
     var game = this;
 
     function convertVariablesToLists(entry) {
@@ -47,6 +50,7 @@ analytics._map = function () {
 };
 
 analytics._reduce = function (id, entries) {
+    "use strict";
 
     function compareNumbers(a, b) {
         return a - b;
@@ -84,6 +88,7 @@ analytics._reduce = function (id, entries) {
 };
 
 analytics._finalize = function (id, entry) {
+    "use strict";
 
     function deduplicate(values, percentiles) {
 

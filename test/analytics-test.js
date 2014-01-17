@@ -168,7 +168,7 @@ describe('Analytics:', function () {
         });
 
         // See http://docs.mongodb.org/manual/reference/command/mapReduce/#requirements-for-the-reduce-function
-        describe("Satisfies the requirements for a reduce function", function () {
+        describe("Satisfies the requirements for a reduce function:", function () {
             var A = someStatValue(Math.floor(Math.random() * 3 + 1));
             var B = someStatValue(Math.floor(Math.random() * 3 + 1));
             var C = someStatValue(Math.floor(Math.random() * 3 + 1));

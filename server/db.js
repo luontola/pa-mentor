@@ -12,6 +12,8 @@ var db = mongojs(config.dbUri, ['games', 'percentiles']);
 
 db.games.ensureIndex({ gameId: 1 }, { unique: true }).done();
 
+db.games.ensureIndex({ startTime: 1 }).done();
+
 db.percentiles.ensureIndex({'value.timepoint': 1}, { unique: true }).done();
 
 db.removeAll = function () {

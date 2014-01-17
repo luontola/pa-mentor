@@ -7,10 +7,11 @@
 var assert = require('assert');
 var updater = require('../server/updater');
 var config = require('../server/config');
+var gamesDao = require('../server/games');
 var analytics = require('../server/analytics');
 var db = require('../server/db');
 
-function describeSlow() {
+function describeSlow() { // TODO: extract to test helpers
     if (process.argv.indexOf('--watch') >= 0) {
         describe.skip.apply(this, arguments);
     } else {
@@ -69,9 +70,13 @@ describe('Updater:', function () {
 
     describeSlow("After updating", function () {
         this.timeout(10 * 1000);
+        var oldGame = { gameId: 42, startTime: 100 };
         before(function (done) {
             config.samplingPeriod = 30 * 60 * 1000;
             db.removeAll()
+                .then(function () {
+                    return gamesDao.save(oldGame);
+                })
                 .then(updater.update)
                 .fin(done).done();
         });
@@ -100,6 +105,14 @@ describe('Updater:', function () {
                     assert.ok(stats.armyCount.values.length >= 1, "armyCount.values was empty");
                 })
                 .fin(done).done()
+        });
+
+        it("old games have been removed from the database", function (done) {
+            gamesDao.findById(oldGame.gameId)
+                .then(function (game) {
+                    assert.ok(game === null, "expected old game to have been removed, but it was not");
+                })
+                .fin(done).done();
         });
     });
 });

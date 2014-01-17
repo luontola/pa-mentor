@@ -25,4 +25,8 @@ games.findById = function (gameId) {
     return db.games.findOne({ gameId: gameId });
 };
 
+games.removeGamesStartedBefore = function (timestamp) {
+    return db.games.remove({ startTime: { $lt: timestamp } });
+};
+
 module.exports = games;

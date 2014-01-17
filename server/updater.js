@@ -83,8 +83,14 @@ updater.update = function () {
     }
 
     // TODO: find the newest game we have persisted and fetch games newer than it (delta ~1 day)
-    var chunks = updater._chunks(Date.now(), config);
+    var now = Date.now();
+    var chunks = updater._chunks(now, config);
+    var ageLimit = now - config.samplingPeriod;
+
     return fetchChunksOfGames(chunks)
+        .then(function () {
+            return gamesDao.removeGamesStartedBefore(ageLimit);
+        })
         .then(function () {
             console.log("Refreshing analytics")
         })

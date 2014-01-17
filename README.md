@@ -46,8 +46,12 @@ Version History
 ### Upcoming
 
 - Will automatically detect and use a backend running on localhost
+
+Backend changes; published immediately
+
 - Fixed incorrect calculations in the map-reduce functions
-- Shows the application version on the backend's index page
+- Show the application version on the index page
+- Automatically remove the stats of old games
 
 ### PA Mentor 0.1.0 (2014-01-05)
 

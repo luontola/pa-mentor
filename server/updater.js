@@ -7,7 +7,7 @@
 var Q = require('q');
 var _ = require('underscore');
 var config = require('./config');
-var games = require('./games');
+var gamesDao = require('./games');
 var analytics = require('./analytics');
 var rest = require('./rest');
 
@@ -36,27 +36,21 @@ updater.start = function () {
 
 updater.update = function () {
 
-    function persistGames(gameChunk) {
-        var gameIds = _(gameChunk).map(function (game) {
-            var gameId = game.gameId;
-            if (!gameId) {
-                throw new Error("Has no gameId: " + JSON.stringify(game));
-            }
-            return  gameId;
-        });
+    function persistGames(games) {
+        console.info("Fetching %s games: %s", games.length, _(games).pluck('gameId'));
 
-        console.info("Fetching %s games: %s", gameIds.length, gameIds);
-
-        // TODO: combine the data from all service urls
-        return Q.all(_(gameIds).map(function (gameId) {
-            return rest.getObject('http://www.nanodesu.info/pastats/report/get?gameId=' + gameId)
-                .then(games.save);
+        return Q.all(_(games).map(function (game) {
+            return rest.getObject('http://www.nanodesu.info/pastats/report/get?gameId=' + game.gameId)
+                .then(function (details) {
+                    return updater._mergeObjects(game, details);
+                })
+                .then(gamesDao.save);
         }));
     }
 
-    function filterNewGames(gameChunk) {
-        return Q.all(_(gameChunk).map(function (game) {
-            return games.findById(game.gameId)
+    function filterNewGames(games) {
+        return Q.all(_(games).map(function (game) {
+            return gamesDao.findById(game.gameId)
                 .then(function (persisted) {
                     return persisted ? [] : [game];
                 });
@@ -134,5 +128,19 @@ updater._chunkToUrl = function (chunk) {
     return 'http://www.nanodesu.info/pastats/report/winners?start=' + start + '&duration=' + duration;
 };
 
+updater._mergeObjects = function (a, b) {
+    var merged = {};
+    copyNewProperties(a, merged);
+    copyNewProperties(b, merged);
+    return merged;
+};
+
+function copyNewProperties(src, dest) {
+    for (var property in src) {
+        if (src.hasOwnProperty(property) && !dest[property]) {
+            dest[property] = src[property];
+        }
+    }
+}
 
 module.exports = updater;

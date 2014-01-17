@@ -10,6 +10,14 @@ var config = require('../server/config');
 var analytics = require('../server/analytics');
 var db = require('../server/db');
 
+function describeSlow() {
+    if (process.argv.indexOf('--watch') >= 0) {
+        describe.skip.apply(this, arguments);
+    } else {
+        describe.apply(this, arguments);
+    }
+}
+
 describe('Updater:', function () {
 
     it("Looks for new game in chunks", function () {
@@ -34,7 +42,7 @@ describe('Updater:', function () {
             updater._chunkToUrl({start: 123111, duration: 5111}));
     });
 
-    describe("After updating", function () {
+    describeSlow("After updating", function () {
         this.timeout(10 * 1000);
         before(function (done) {
             config.samplingPeriod = 60 * 60 * 1000;
@@ -58,5 +66,5 @@ describe('Updater:', function () {
                 })
                 .fin(done).done()
         });
-    })
+    });
 });

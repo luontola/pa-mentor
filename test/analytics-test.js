@@ -7,7 +7,7 @@
 var assert = require('assert');
 var sinon = require('sinon');
 var analytics = require('../server/analytics');
-var games = require('../server/games');
+var gamesDao = require('../server/games');
 var db = require('../server/db');
 
 function someStatValue(value) {
@@ -240,7 +240,7 @@ describe('Analytics:', function () {
             };
             db.removeAll()
                 .then(function () {
-                    return games.save(game);
+                    return gamesDao.save(game);
                 })
                 .then(analytics.refresh)
                 .fin(done).done();

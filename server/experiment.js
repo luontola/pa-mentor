@@ -7,13 +7,13 @@
 var Q = require('q');
 var db = require('./db');
 var rest = require('./rest');
-var games = require('./games');
+var gamesDao = require('./games');
 var analytics = require('./analytics');
 
 var gameId = process.argv[2] || 11919;
 
 rest.getObject('http://www.nanodesu.info/pastats/report/get?gameId=' + gameId)
-    .then(games.save)
+    .then(gamesDao.save)
     .then(function () {
         console.info("\nCalculating statistics...");
         return analytics.refreshAndGet(5000 * 100);

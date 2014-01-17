@@ -70,7 +70,7 @@ describe('Updater:', function () {
     describeSlow("After updating", function () {
         this.timeout(10 * 1000);
         before(function (done) {
-            config.samplingPeriod = 60 * 60 * 1000;
+            config.samplingPeriod = 30 * 60 * 1000;
             db.removeAll()
                 .then(updater.update)
                 .fin(done).done();
@@ -80,16 +80,16 @@ describe('Updater:', function () {
             db.games.findOne({})
                 .then(function (game) {
                     assert.ok(game, "no games were found");
-                    assert.ok(game.gameId, "gameId is missing");
+                    assert.ok(typeof game.gameId === 'number', "gameId is missing");
 
                     // properties from details
-                    assert.ok(game.playerTimeData, "playerTimeData is missing");
-                    assert.ok(game.playerInfo, "playerInfo is missing");
+                    assert.ok(game.playerTimeData instanceof Object, "playerTimeData is missing");
+                    assert.ok(game.playerInfo instanceof Object, "playerInfo is missing");
 
                     // properties from overview
-                    assert.ok(game.teams, "teams is missing");
-                    assert.ok(game.winner, "winner is missing");
-                    assert.ok(game.startTime, "startTime is missing");
+                    assert.ok(game.teams instanceof Array, "teams is missing");
+                    assert.ok(typeof game.winner === 'number', "winner is missing");
+                    assert.ok(typeof game.startTime === 'number', "startTime is missing");
                 })
                 .fin(done).done();
         });

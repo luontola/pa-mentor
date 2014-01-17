@@ -6,7 +6,7 @@
 
 var assert = require('assert');
 var db = require('../server/db');
-var games = require('../server/games');
+var gamesDao = require('../server/games');
 var analytics = require('../server/analytics');
 
 function assertCount(expectedCount, collection, done) {
@@ -22,15 +22,15 @@ describe('Games:', function () {
     });
 
     it('Saves a game to database', function (done) {
-        games.save({gameId: 10})
+        gamesDao.save({gameId: 10})
             .done(function () {
                 assertCount(1, db.games, done);
             });
     });
     it('Saves multiple games to database', function (done) {
-        games.save({gameId: 10})
+        gamesDao.save({gameId: 10})
             .then(function () {
-                return games.save({gameId: 20})
+                return gamesDao.save({gameId: 20})
             })
             .done(function () {
                 assertCount(2, db.games, done);
@@ -38,9 +38,9 @@ describe('Games:', function () {
     });
     describe('Saving the same game multiple times', function () {
         beforeEach(function (done) {
-            games.save({gameId: 10, someField: "first version"})
+            gamesDao.save({gameId: 10, someField: "first version"})
                 .then(function () {
-                    return games.save({gameId: 10, someField: "second version"})
+                    return gamesDao.save({gameId: 10, someField: "second version"})
                 })
                 .fin(done);
         });
@@ -48,7 +48,7 @@ describe('Games:', function () {
             assertCount(1, db.games, done);
         });
         it('Updates the persisted entity', function (done) {
-            games.findById(10).done(function (game) {
+            gamesDao.findById(10).done(function (game) {
                 assert.equal("second version", game.someField);
                 done();
             });
@@ -88,7 +88,7 @@ describe('Games:', function () {
             }
         };
 
-        games.save(game)
+        gamesDao.save(game)
             .then(function () {
                 return analytics.refreshAndGet(5000)
             })

@@ -13,7 +13,7 @@ var analytics = require('./analytics');
 var config = require('./config');
 
 function getVersion() {
-    return Q.ninvoke(child_process, 'exec', 'git describe --dirty --always', { timeout: 10000 })
+    return Q.ninvoke(child_process, 'exec', 'git describe --dirty --always', { cwd: __dirname, timeout: 10000 })
         .spread(function (stdout, stderr) {
             return stdout;
         })

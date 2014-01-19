@@ -12,6 +12,17 @@ var _ = require('underscore');
 var analytics = require('./analytics');
 var config = require('./config');
 
+function getVersion() {
+    return Q.ninvoke(child_process, 'exec', 'git describe --dirty --always', { timeout: 10000 })
+        .spread(function (stdout, stderr) {
+            return stdout;
+        })
+        .fail(function (err) {
+            console.warn("Failed to get version: " + err);
+            return '';
+        });
+}
+
 function getFunctionDocs(fn) {
     var code = fn.toString();
     var match = /\/\*\*(.*)\*\//g.exec(code);
@@ -40,10 +51,9 @@ function getApiDocs() {
 var server = express();
 
 server.get('/', function (req, res) {
-    child_process.exec('git describe --dirty --always', { timeout: 10000 }, function (err, stdout) {
-        var version = err ? '' : ' ' + stdout;
+    getVersion().then(function (version) {
         res.setHeader('Content-Type', 'text/plain');
-        res.send('PA Mentor' + version);
+        res.send(('PA Mentor ' + version).trim());
     });
 });
 

@@ -14,21 +14,16 @@ var rest = require('./rest');
 var updater = {};
 
 updater.start = function () {
-    var interval = config.updateInterval;
-
     function updateLoop() {
         console.info("Updating...");
         updater.update()
-            .then(function () {
+            .done(function () {
                 console.info("Update done");
-            })
-            .fail(function (err) {
+                setTimeout(updateLoop, config.updateInterval);
+            }, function (err) {
                 console.warn("Update failed\n", err.stack);
-            })
-            .fin(function () {
-                setTimeout(updateLoop, interval);
-            })
-            .done();
+                setTimeout(updateLoop, config.retryInterval);
+            });
     }
 
     updateLoop();

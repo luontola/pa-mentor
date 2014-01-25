@@ -52,6 +52,7 @@ Backend changes; published immediately
 - Fixed multiple bugs in the percentile calculations
 - Show the application version on the index page
 - Automatically remove the stats of old games
+- If downloading a game from PA Stats fails, retry after a minute
 
 ### PA Mentor 0.1.0 (2014-01-05)
 

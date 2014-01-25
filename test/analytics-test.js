@@ -17,8 +17,45 @@ function someStatValue(value) {
 describe('Analytics:', function () {
 
     it('Calculates percentiles of player stats', function (done) {
+        // Data based on
+        // http://www.nanodesu.info/pastats/report/winners?start=1387745090&duration=3600
+        // http://www.nanodesu.info/pastats/report/get?gameId=11919
         var game = {
             "gameId": 11919,
+            "teams": [
+                { "teamId": 0, "players": [
+                    { "playerId": 3866, "playerName": "[RLM] beire" }
+                ] },
+                { "teamId": 5, "players": [
+                    { "playerId": -1, "playerName": "Anon" }
+                ] },
+                { "teamId": 1, "players": [
+                    { "playerId": -1, "playerName": "Anon" }
+                ] },
+                { "teamId": 6, "players": [
+                    { "playerId": -1, "playerName": "Anon" }
+                ] },
+                { "teamId": 9, "players": [
+                    { "playerId": -1, "playerName": "Anon" }
+                ] },
+                { "teamId": 2, "players": [
+                    { "playerId": 3739, "playerName": "๖ۣۜZaphodX" }
+                ] },
+                { "teamId": 7, "players": [
+                    { "playerId": 6100, "playerName": "ORFJackal" }
+                ] },
+                { "teamId": 3, "players": [
+                    { "playerId": 8898, "playerName": "[RLM] masterofn0ne" }
+                ] },
+                { "teamId": 8, "players": [
+                    { "playerId": -1, "playerName": "Anon" }
+                ] },
+                { "teamId": 4, "players": [
+                    { "playerId": -1, "playerName": "Anon" }
+                ] }
+            ],
+            "winner": 2,
+            "startTime": 1387745093622,
             "playerTimeData": {
                 "6100": [
                     {"timepoint": 1387745097889, "armyCount": 1, "metalIncome": 10, "energyIncome": 1000, "metalIncomeNet": 10, "energyIncomeNet": 1000, "metalSpending": 0, "energySpending": 0, "metalStored": 800, "energyStored": 12000, "metalProduced": 38, "energyProduced": 3778, "metalWasted": 38, "energyWasted": 3778, "apm": 2},
@@ -53,7 +90,7 @@ describe('Analytics:', function () {
                 return gamesDao.save(game);
             })
             .then(function () {
-                return analytics.refreshAndGet(5000)
+                return analytics.refreshAndGet(10000)
             })
             .done(function (stats) {
                 assert.deepEqual([654, 688, 720, 759], stats.metalStored.values);
@@ -74,6 +111,7 @@ describe('Analytics:', function () {
 
         it("Emits a player's stats using relative timepoints", function () {
             var game = {
+                "startTime": 1000000,
                 "playerTimeData": {
                     "6100": [
                         {"timepoint": 1000000, "stat1": 1},
@@ -92,6 +130,7 @@ describe('Analytics:', function () {
 
         it("Emits multiple stats", function () {
             var game = {
+                "startTime": 1000000,
                 "playerTimeData": {
                     "6100": [
                         {"timepoint": 1000000, "stat1": 1, "stat2": 10}
@@ -104,27 +143,28 @@ describe('Analytics:', function () {
             assert.deepEqual([0, { timepoint: 0, stat1: [1], stat2: [10] }], emit.getCall(0).args);
         });
 
-        it("Emits multiple players, each with their own local time", function () {
-            // TODO: or is the timepoint actually server time, so that we can rely on it being in sync?
+        it("Emits multiple players, with timepoints relative to the game's start time", function () {
             var game = {
+                "startTime": 1000000,
                 "playerTimeData": {
                     "6100": [
-                        {"timepoint": 1000456, "stat1": 1}
+                        {"timepoint": 1005000, "stat1": 1}
                     ],
                     "8898": [
-                        {"timepoint": 1000987, "stat1": 2}
+                        {"timepoint": 1010000, "stat1": 2}
                     ]
                 }
             };
 
             analytics._map.apply(game);
 
-            assert.deepEqual([0, { timepoint: 0, stat1: [1] }], emit.getCall(0).args);
-            assert.deepEqual([0, { timepoint: 0, stat1: [2] }], emit.getCall(1).args);
+            assert.deepEqual([5000, { timepoint: 5000, stat1: [1] }], emit.getCall(0).args);
+            assert.deepEqual([10000, { timepoint: 10000, stat1: [2] }], emit.getCall(1).args);
         });
 
         it("Rounds timepoints to 5 seconds", function () {
             var game = {
+                "startTime": 1000000,
                 "playerTimeData": {
                     "6100": [
                         {"timepoint": 1000000, "stat1": 1},
@@ -276,6 +316,7 @@ describe('Analytics:', function () {
         beforeEach(function (done) {
             var game = {
                 "gameId": 123,
+                "startTime": 10000000,
                 "playerTimeData": {
                     "123": [
                         {"timepoint": 10000000, "stat": 1},

@@ -27,23 +27,17 @@ analytics._map = function () {
         return Math.round(n / multiple) * multiple
     }
 
+    var startTime = game.startTime;
     var playerTimeData = game.playerTimeData;
     for (var playerId in  playerTimeData) {
         if (playerTimeData.hasOwnProperty(playerId)) {
             var entries = playerTimeData[playerId];
-            var startTime = null;
             entries.forEach(function (entry) {
-                startTime = startTime || entry.timepoint;
                 var relativeTime = entry.timepoint - startTime;
 
                 var result = convertVariablesToLists(entry);
                 result.timepoint = roundByMultiple(relativeTime, 5000);
                 emit(result.timepoint, result);
-
-                // TODO: remove this debug logging after locating the funny games
-                if (result.timepoint === 0 && entry.armyCount > 100) {
-                    print("Game", game.gameId, "had armyCount", entry.armyCount, "at timepoint", entry.timepoint, "/ relativeTime", relativeTime);
-                }
             })
         }
     }

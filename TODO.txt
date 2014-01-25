@@ -7,7 +7,8 @@ OK - show application version on index page
 
 OK - save full game details
 OK - remove old games from database
-- use game.startTime when calculating relativeTime
+OK - use game.startTime when calculating relativeTime
+- on save, check that game has required fields
 - if update fails (e.g. due to http error), retry after one minute
 - fetch games from oldest to newest (in order to avoid gaps if some fetches fail)
     - find out the newest game in database

@@ -49,7 +49,7 @@ Version History
 
 Backend changes; published immediately
 
-- Fixed incorrect calculations in the map-reduce functions
+- Fixed multiple bugs in the percentile calculations
 - Show the application version on the index page
 - Automatically remove the stats of old games
 

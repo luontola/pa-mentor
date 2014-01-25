@@ -42,7 +42,9 @@ updater.update = function () {
         return Q.all(_(games).map(function (game) {
             return rest.getObject('http://www.nanodesu.info/pastats/report/get?gameId=' + game.gameId)
                 .then(function (details) {
-                    return updater._mergeObjects(game, details);
+                    var fullGame = updater._mergeObjects(game, details);
+                    gamesDao.validate(fullGame);
+                    return fullGame;
                 })
                 .then(gamesDao.save);
         }));

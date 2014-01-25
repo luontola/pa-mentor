@@ -58,7 +58,81 @@ describe('Games:', function () {
                 assert.equal("second version", game.someField);
                 done();
             });
-        })
+        });
+    });
+
+    describe("Validating a game's schema:", function () {
+        var game;
+        beforeEach(function () {
+            game = {
+                "gameId": 11919,
+                "teams": [
+                    {
+                        "teamId": 0,
+                        "players": [
+                            { "playerId": 3866, "playerName": "[RLM] beire" }
+                        ]
+                    }
+                ],
+                "winner": 2,
+                "startTime": 1387745093622,
+                "playerTimeData": {
+                    "3866": [
+                        {"timepoint": 1387745098815, "armyCount": 1, "metalIncome": 10, "energyIncome": 1000, "metalIncomeNet": 10, "energyIncomeNet": 1000, "metalSpending": 0, "energySpending": 0, "metalStored": 800, "energyStored": 12000, "metalProduced": 49, "energyProduced": 4863, "metalWasted": 49, "energyWasted": 4863, "apm": 5}
+                    ]
+                },
+                "playerInfo": {
+                    "3866": {"name": "[RLM] beire", "color": "rgb(142,107,68)"}
+                }
+            };
+        });
+
+        function assertNotValid(game) {
+            assert.throws(function () {
+                gamesDao.validate(game);
+            }, Error);
+        }
+
+        it("Valid games pass the check", function () {
+            gamesDao.validate(game);
+        });
+
+        it("gameId is required", function () {
+            game.gameId = "junk";
+            assertNotValid(game);
+
+            delete game.gameId;
+            assertNotValid(game);
+        });
+
+        it("startTime is required", function () {
+            game.startTime = "junk";
+            assertNotValid(game);
+
+            delete game.startTime;
+            assertNotValid(game);
+        });
+
+        it("playerTimeData is required", function () {
+            game.playerTimeData = "junk";
+            assertNotValid(game);
+
+            delete game.playerTimeData;
+            assertNotValid(game);
+        });
+
+        it("playerTimeData.*.timepoint is required", function () {
+            game.playerTimeData['3866'][0].timepoint = "junk";
+            assertNotValid(game);
+
+            delete game.playerTimeData['3866'][0].timepoint;
+            assertNotValid(game);
+        });
+
+        it("playerTimeData.*.* are numerical stats", function () {
+            game.playerTimeData['3866'][0].someStat = "junk";
+            assertNotValid(game);
+        });
     });
 
     describe('Removing old games:', function () {

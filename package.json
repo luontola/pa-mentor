@@ -17,7 +17,8 @@
         "express": "3.4.7",
         "underscore": "1.5.2",
         "q": "0.9.7",
-        "log-timestamp": "0.1.0"
+        "log-timestamp": "0.1.0",
+        "tv4": "1.0.12"
     },
     "devDependencies": {
         "mocha": "1.16.2",

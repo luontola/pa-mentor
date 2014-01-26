@@ -164,4 +164,26 @@ describe('Games:', function () {
                 .fin(done).done();
         });
     });
+
+    it('Finds the newest starting time', function (done) {
+        Q.all([
+                gamesDao.save({gameId: 10, startTime: 100}),
+                gamesDao.save({gameId: 20, startTime: 200})
+            ])
+            .then(function () {
+                return gamesDao.getNewestStartTime();
+            })
+            .then(function (startTime) {
+                assert.equal(startTime, 200);
+            })
+            .fin(done).done();
+    });
+
+    it('Newest starting time is 0 when there are no games', function (done) {
+        gamesDao.getNewestStartTime()
+            .then(function (startTime) {
+                assert.equal(startTime, 0);
+            })
+            .fin(done).done();
+    });
 });

@@ -138,6 +138,20 @@ games.findById = function (gameId) {
     return db.games.findOne({ gameId: gameId });
 };
 
+games.getNewestStartTime = function () {
+    return db.games.find({})
+        .sort({ startTime: -1 })
+        .limit(1)
+        .next()
+        .then(function (game) {
+            if (game) {
+                return game.startTime;
+            } else {
+                return 0;
+            }
+        });
+};
+
 games.removeGamesStartedBefore = function (timestamp) {
     return db.games.remove({ startTime: { $lt: timestamp } });
 };

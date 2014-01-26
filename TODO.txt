@@ -15,7 +15,7 @@ OK - fetch games from oldest to newest (in order to avoid gaps if some fetches f
     OK - fetch from that (minus update interval, batch size and max game length) upwards to current time
     OK - make the batch size smaller (e.g. 1 hour) to be nicer to the remote server
 OK - make the updater smarter; don't to a analytics update on server start, but based on the last time when it was done
-- save database version in database, run data migration (regeneration) on startup when necessary
+OK - save database version in database, run data migration (regeneration) on startup when necessary
 
 - group games based on the number of players in the team
 

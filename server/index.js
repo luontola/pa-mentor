@@ -5,7 +5,11 @@
 "use strict";
 
 require('log-timestamp');
+var db = require('./db');
 var server = require('./server');
 var updater = require('./updater');
 
-server.start().then(updater.start).done();
+db.upgrade()
+    .then(server.start)
+    .then(updater.start)
+    .done();

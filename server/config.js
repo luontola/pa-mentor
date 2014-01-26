@@ -16,7 +16,7 @@ var config = {
     retryInterval: Math.max(SECOND, process.env.PA_MENTOR_RETRY_INTERVAL || MINUTE),
     samplingPeriod: Math.max(SECOND, process.env.PA_MENTOR_SAMPLING_PERIOD || 3 * DAY),
     samplingBatchSize: Math.max(SECOND, process.env.PA_MENTOR_SAMPLING_BATCH_SIZE || 3 * HOUR),
-    maxGameDuration: 8 * HOUR
+    maxGameDuration: 8 * HOUR // just a guess; used in the updater to do overlapping fetches to avoid missing games
 };
 
 module.exports = config;

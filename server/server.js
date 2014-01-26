@@ -82,7 +82,10 @@ server.start = function () {
     return Q.ninvoke(server, 'listen', port)
         .then(function () {
             console.info("Server listening on port %s", port);
-            console.info("Running in %s mode", server.get('env'));
+            var env = server.get('env');
+            if (env !== 'production') {
+                console.warn("Running in %s mode. Some debug information may be exposed!", env);
+            }
         });
 };
 

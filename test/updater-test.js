@@ -70,7 +70,7 @@ describe('Updater:', function () {
         this.timeout(10 * 1000);
         var oldGame = { gameId: 42, startTime: 100 };
         before(function (done) {
-            config.samplingPeriod = 30 * 60 * 1000;
+            config.samplingPeriod = 60 * 60 * 1000; // 1 hour
             db.removeAll()
                 .then(function () {
                     return gamesDao.save(oldGame);

@@ -13,20 +13,37 @@ var rest = require('./rest');
 
 var updater = {};
 
+function updateLoop() {
+    console.info("Updating...");
+    updater.update()
+        .done(function () {
+            console.info("Update done");
+            setTimeout(updateLoop, config.updateInterval);
+        }, function (err) {
+            console.warn("Update failed\n", err.stack);
+            setTimeout(updateLoop, config.retryInterval);
+        });
+}
+
 updater.start = function () {
-    function updateLoop() {
-        console.info("Updating...");
-        updater.update()
-            .done(function () {
-                console.info("Update done");
-                setTimeout(updateLoop, config.updateInterval);
-            }, function (err) {
-                console.warn("Update failed\n", err.stack);
-                setTimeout(updateLoop, config.retryInterval);
-            });
+    function toMinutes(millis) {
+        return (millis / 1000 / 60).toFixed(1)
     }
 
-    updateLoop();
+    gamesDao.getNewestStartTime()
+        .then(function (newestStartTime) {
+            var timeSinceUpdate = Date.now() - newestStartTime;
+            var nextUpdateDelay = config.updateInterval - timeSinceUpdate;
+            if (newestStartTime > 0) {
+                console.info("Last updated %s minutes ago", toMinutes(timeSinceUpdate));
+                if (nextUpdateDelay > 0) {
+                    console.info("Next update in %s minutes", toMinutes(nextUpdateDelay));
+                }
+            } else {
+                console.info("Database empty; updating immediately")
+            }
+            setTimeout(updateLoop, nextUpdateDelay);
+        });
 };
 
 updater.update = function () {

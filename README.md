@@ -49,7 +49,10 @@ Version History
 
 ### Server Update (2014-01-26)
 
-- Improved logic for downloading games from PA Stats, to avoid missing any games
+- Improved logic for downloading games from PA Stats, to avoid missing any
+games
+- Will not anymore run analytics immediately on server startup, if they
+have been run recently, to reduce server load
 
 ### Server Update (2014-01-25)
 
@@ -62,11 +65,13 @@ Version History
 
 ### Server Update (2014-01-10)
 
-- Fixed a bug in the percentile calculations causing some low value data points to be ignored
+- Fixed a bug in the percentile calculations causing some low value data
+points to be ignored
 
 ### Server Update (2014-01-09)
 
-- Fixed a bug in the percentile calculations causing some random data points to be ignored
+- Fixed a bug in the percentile calculations causing some random data
+points to be ignored
 - Show the application version on the index page
 
 ### PA Mentor 0.1.0 (2014-01-05)

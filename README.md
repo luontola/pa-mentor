@@ -47,12 +47,23 @@ Version History
 
 - Will automatically detect and use a backend running on localhost
 
-Backend changes; published immediately
+### Server Update (2014-01-26)
 
-- Fixed multiple bugs in the percentile calculations
-- Show the application version on the index page
+- Fixed the time of data points to be more accurate
+- If downloading a game's data from PA Stats fails, retry it soon
+
+### Server Update (2014-01-17)
+
 - Automatically remove the stats of old games
-- If downloading a game from PA Stats fails, retry after a minute
+
+### Server Update (2014-01-10)
+
+- Fixed a bug in the percentile calculations causing some low value data points to be ignored
+
+### Server Update (2014-01-09)
+
+- Fixed a bug in the percentile calculations causing some random data points to be ignored
+- Show the application version on the index page
 
 ### PA Mentor 0.1.0 (2014-01-05)
 

@@ -21,20 +21,18 @@ function describeSlow() { // TODO: extract to test helpers
 
 describe('Updater:', function () {
 
-    it("Looks for new game in chunks", function () {
-        var now = 10000;
-        var config = {
-            samplingPeriod: 3500,
-            samplingChunkSize: 1000
-        };
-
-        var chunks = updater._chunks(now, config);
+    it("Looks for new games in chunks", function () {
+        var chunks = updater._chunks({
+            start: 6500,
+            end: 10000,
+            step: 1000
+        });
 
         assert.deepEqual([
-            {start: 9000, duration: 1000},
-            {start: 8000, duration: 1000},
-            {start: 7000, duration: 1000},
-            {start: 6500, duration: 500}
+            {start: 6500, duration: 1000},
+            {start: 7500, duration: 1000},
+            {start: 8500, duration: 1000},
+            {start: 9500, duration: 1000}
         ], chunks)
     });
 

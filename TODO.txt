@@ -10,10 +10,10 @@ OK - remove old games from database
 OK - use game.startTime when calculating relativeTime
 OK - on save, check that game has required fields
 OK - if update fails (e.g. due to http error), retry after one minute
-- fetch games from oldest to newest (in order to avoid gaps if some fetches fail)
+OK - fetch games from oldest to newest (in order to avoid gaps if some fetches fail)
     OK - find out the newest game in database
-    - fetch from that (minus update interval, batch size and max game length) upwards to current time
-    - make the batch size smaller (e.g. 1 hour) to be nicer to the remote server
+    OK - fetch from that (minus update interval, batch size and max game length) upwards to current time
+    OK - make the batch size smaller (e.g. 1 hour) to be nicer to the remote server
 - make the updater smarter; don't to a analytics update on server start, but based on the last time when it was done
 - save database version in database, run data migration (regeneration) on startup when necessary
 
@@ -27,3 +27,5 @@ OK - if update fails (e.g. due to http error), retry after one minute
     - this would avoid the need to push tags to show the version number
         http://stackoverflow.com/questions/2988088/do-git-tags-get-pushed-as-well
         http://stackoverflow.com/questions/19814323/pushing-metadata-say-via-tags-notes-automatically-in-git-w-o-using-a-client
+
+- improve Mocha to support asynchronous tests that return a promise instead of using the callback

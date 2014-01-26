@@ -61,56 +61,59 @@ updater.update = function () {
     }
 
     function fetchChunksOfGames(chunks) {
-        var head = _.first(chunks);
-        var tail = _.rest(chunks);
+        var head = _.head(chunks);
+        var tail = _.tail(chunks);
         if (!head) {
             return Q(null);
         }
         return fetchGameChunk(head)
             .then(filterNewGames)
-            .then(function (newGames) {
-                if (newGames.length === 0) {
-                    return null;
-                }
-                return persistGames(newGames)
-                    .then(function () {
-                        return tail ? fetchChunksOfGames(tail) : null;
-                    });
+            .then(persistGames)
+            .then(function () {
+                return fetchChunksOfGames(tail);
             });
     }
 
-    // TODO: find the newest game we have persisted and fetch games newer than it (delta ~1 day)
     var now = Date.now();
-    var chunks = updater._chunks(now, config);
     var ageLimit = now - config.samplingPeriod;
 
-    return fetchChunksOfGames(chunks)
+    return gamesDao.getNewestStartTime()
+        .then(function (newestStartTime) {
+            var start = newestStartTime - config.samplingBatchSize - config.maxGameDuration;
+            if (start < ageLimit) {
+                start = ageLimit;
+            }
+            var chunks = updater._chunks({
+                start: start,
+                end: now,
+                step: config.samplingBatchSize
+            });
+            return fetchChunksOfGames(chunks);
+        })
         .then(function () {
             return gamesDao.removeGamesStartedBefore(ageLimit);
         })
         .then(function () {
-            console.log("Refreshing analytics")
+            console.info("Refreshing analytics")
         })
         .then(analytics.refresh);
 };
 
-
-updater._chunks = function (now, config) {
-    var startLimit = now - config.samplingPeriod;
-    var end = now;
-    var step = config.samplingChunkSize;
+updater._chunks = function (opts) {
+    var start = opts.start,
+        end = opts.end,
+        step = opts.step;
 
     function nextChunk() {
-        var start = Math.max(startLimit, end - step);
-        var duration = Math.max(0, end - start);
-        if (duration === 0) {
+        if (start > end) {
             return null;
         }
-        end = start;
-        return {
+        var chunk = {
             start: start,
-            duration: duration
+            duration: step
         };
+        start += step;
+        return chunk;
     }
 
     var chunks = [];

@@ -49,6 +49,10 @@ Version History
 
 ### Server Update (2014-01-26)
 
+- Improved logic for downloading games from PA Stats, to avoid missing any games
+
+### Server Update (2014-01-25)
+
 - Fixed the time of data points to be more accurate
 - If downloading a game's data from PA Stats fails, retry it soon
 

@@ -15,7 +15,8 @@ var config = {
     updateInterval: Math.max(SECOND, process.env.PA_MENTOR_UPDATE_INTERVAL || HOUR),
     retryInterval: Math.max(SECOND, process.env.PA_MENTOR_RETRY_INTERVAL || MINUTE),
     samplingPeriod: Math.max(SECOND, process.env.PA_MENTOR_SAMPLING_PERIOD || 3 * DAY),
-    samplingChunkSize: Math.max(SECOND, process.env.PA_MENTOR_SAMPLING_CHUNK_SIZE || DAY)
+    samplingBatchSize: Math.max(SECOND, process.env.PA_MENTOR_SAMPLING_BATCH_SIZE || 3 * HOUR),
+    maxGameDuration: 8 * HOUR
 };
 
 module.exports = config;

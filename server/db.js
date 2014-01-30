@@ -21,7 +21,7 @@ function ensureIndexes() {
     return Q.all([
         db.games.ensureIndex({ gameId: 1 }, { unique: true }),
         db.games.ensureIndex({ startTime: 1 }),
-        db.percentiles.ensureIndex({'value.timepoint': 1})
+        db.percentiles.ensureIndex({'value.timepoint': 1}) // TODO: index for also team size? same or separate index?
     ]);
 }
 

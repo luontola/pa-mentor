@@ -21,6 +21,12 @@ OK - locate the outlier games in the statistics (an army of 1393 at time 0 is un
 
 OK - group games based on the number of players in the team
 
+!! - wait for server to update itself
+	- check that it has teamSize in http://pa-mentor.orfjackal.net/api/percentiles/0?teamSize=1
+	- remove workaround from analytics.getPercentiles
+- figure out should 'value.timepoint' and 'value.teamSize' both be indexed, and should it be same or different indexes
+- release 0.2.0
+
 - filter games based on whether the player was in the winning team
 
 - improve Mocha to support asynchronous tests that return a promise instead of using the callback

@@ -113,6 +113,22 @@ describe('Games:', function () {
             assertNotValid(game);
         });
 
+        it("teams is required", function () {
+            game.teams = "junk";
+            assertNotValid(game);
+
+            delete game.teams;
+            assertNotValid(game);
+        });
+
+        it("teams[*].players[*].playerId is required", function () {
+            game.teams[0].players[0].playerId = "junk";
+            assertNotValid(game);
+
+            delete game.teams[0].players[0].playerId;
+            assertNotValid(game);
+        });
+
         it("playerTimeData is required", function () {
             game.playerTimeData = "junk";
             assertNotValid(game);
@@ -121,7 +137,7 @@ describe('Games:', function () {
             assertNotValid(game);
         });
 
-        it("playerTimeData.*.timepoint is required", function () {
+        it("playerTimeData.*[*].timepoint is required", function () {
             game.playerTimeData['3866'][0].timepoint = "junk";
             assertNotValid(game);
 
@@ -129,7 +145,7 @@ describe('Games:', function () {
             assertNotValid(game);
         });
 
-        it("playerTimeData.*.* are numerical stats", function () {
+        it("playerTimeData.*[*].* are numerical stats", function () {
             game.playerTimeData['3866'][0].someStat = "junk";
             assertNotValid(game);
         });

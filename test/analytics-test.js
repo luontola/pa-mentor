@@ -4,6 +4,7 @@
 
 'use strict';
 
+var _ = require('underscore');
 var assert = require('assert');
 var sinon = require('sinon');
 var analytics = require('../server/analytics');
@@ -11,7 +12,7 @@ var gamesDao = require('../server/games');
 var db = require('../server/db');
 
 function someStatValue(value) {
-    return { timepoint: 0, someStat: [value] };
+    return { timepoint: 0, teamSize: 1, someStat: [value] };
 }
 
 describe('Analytics:', function () {
@@ -110,6 +111,10 @@ describe('Analytics:', function () {
             global.emit.restore();
         });
 
+        function emittedData() {
+            return _.pluck(emit.args, 1);
+        }
+
         it("Emits a player's stats using relative timepoints", function () {
             var game = {
                 "startTime": 1000000,
@@ -124,9 +129,39 @@ describe('Analytics:', function () {
 
             analytics._map.apply(game);
 
-            assert.deepEqual([0, { timepoint: 0, stat1: [1] }], emit.getCall(0).args);
-            assert.deepEqual([5000, { timepoint: 5000, stat1: [2] }], emit.getCall(1).args);
-            assert.deepEqual([10000, { timepoint: 10000, stat1: [3] }], emit.getCall(2).args);
+            var emitted = emittedData();
+            assert.deepEqual({ timepoint: 0, teamSize: 1, stat1: [1] }, emitted[0]);
+            assert.deepEqual({ timepoint: 5000, teamSize: 1, stat1: [2] }, emitted[1]);
+            assert.deepEqual({ timepoint: 10000, teamSize: 1, stat1: [3] }, emitted[2]);
+        });
+
+        it("Emits the number of players in the same team", function () {
+            var game = {
+                "startTime": 1000000,
+                "teams": [
+                    { "teamId": 0, "players": [
+                        { "playerId": 1000, "playerName": "Player 1" }
+                    ] },
+                    { "teamId": 1, "players": [
+                        { "playerId": 2000, "playerName": "Player 2" },
+                        { "playerId": -1, "playerName": "Anon" }
+                    ] }
+                ],
+                "playerTimeData": {
+                    "1000": [
+                        {"timepoint": 1000000, "stat1": 10}
+                    ],
+                    "2000": [
+                        {"timepoint": 1000000, "stat1": 20}
+                    ]
+                }
+            };
+
+            analytics._map.apply(game);
+
+            var emitted = emittedData();
+            assert.deepEqual({ timepoint: 0, teamSize: 1, stat1: [10] }, emitted[0]);
+            assert.deepEqual({ timepoint: 0, teamSize: 2, stat1: [20] }, emitted[1]);
         });
 
         it("Emits multiple stats", function () {
@@ -141,7 +176,8 @@ describe('Analytics:', function () {
 
             analytics._map.apply(game);
 
-            assert.deepEqual([0, { timepoint: 0, stat1: [1], stat2: [10] }], emit.getCall(0).args);
+            var emitted = emittedData();
+            assert.deepEqual({ timepoint: 0, teamSize: 1, stat1: [1], stat2: [10] }, emitted[0]);
         });
 
         it("Emits multiple players, with timepoints relative to the game's start time", function () {
@@ -159,8 +195,9 @@ describe('Analytics:', function () {
 
             analytics._map.apply(game);
 
-            assert.deepEqual([5000, { timepoint: 5000, stat1: [1] }], emit.getCall(0).args);
-            assert.deepEqual([10000, { timepoint: 10000, stat1: [2] }], emit.getCall(1).args);
+            var emitted = emittedData();
+            assert.deepEqual({ timepoint: 5000, teamSize: 1, stat1: [1] }, emitted[0]);
+            assert.deepEqual({ timepoint: 10000, teamSize: 1, stat1: [2] }, emitted[1]);
         });
 
         it("Rounds timepoints to 5 seconds", function () {
@@ -177,23 +214,24 @@ describe('Analytics:', function () {
 
             analytics._map.apply(game);
 
-            assert.deepEqual([0, { timepoint: 0, stat1: [1] }], emit.getCall(0).args);
-            assert.deepEqual([5000, { timepoint: 5000, stat1: [2] }], emit.getCall(1).args);
-            assert.deepEqual([10000, { timepoint: 10000, stat1: [3] }], emit.getCall(2).args);
+            var emitted = emittedData();
+            assert.deepEqual({ timepoint: 0, teamSize: 1, stat1: [1] }, emitted[0]);
+            assert.deepEqual({ timepoint: 5000, teamSize: 1, stat1: [2] }, emitted[1]);
+            assert.deepEqual({ timepoint: 10000, teamSize: 1, stat1: [3] }, emitted[2]);
         });
     });
 
     describe("#_reduce()", function () {
 
-        it("Keeps timepoint and merges sorted values", function () {
+        it("Keeps timepoint and teamSize, but merges sorted values", function () {
             var entries = [
-                { timepoint: 5000, someStat: [1, 3] },
-                { timepoint: 5000, someStat: [2, 4] }
+                { timepoint: 5000, teamSize: 2, someStat: [1, 3] },
+                { timepoint: 5000, teamSize: 2, someStat: [2, 4] }
             ];
 
             var results = analytics._reduce(0, entries);
 
-            assert.deepEqual({ timepoint: 5000, someStat: [1, 2, 3, 4] }, results);
+            assert.deepEqual({ timepoint: 5000, teamSize: 2, someStat: [1, 2, 3, 4] }, results);
         });
 
         it("Sorting uses numeric sort, not lexical sort", function () {

@@ -26,16 +26,36 @@ analytics._map = function () {
         return Math.round(n / multiple) * multiple
     }
 
+    function getTeamSize(game, playerId) {
+        var teams = game.teams;
+        if (!teams) { // our tests don't always define teams, just to keep the test data smaller
+            return 1;
+        }
+        for (var i = 0; i < teams.length; i++) {
+            var team = teams[i];
+            var players = team.players;
+            for (var j = 0; j < players.length; j++) {
+                var player = players[j];
+                if (playerId === player.playerId) {
+                    return players.length;
+                }
+            }
+        }
+        return 1;
+    }
+
     var startTime = game.startTime;
     var playerTimeData = game.playerTimeData;
     for (var playerId in  playerTimeData) {
         if (playerTimeData.hasOwnProperty(playerId)) {
             var entries = playerTimeData[playerId];
+            var teamSize = getTeamSize(game, parseInt(playerId));
             entries.forEach(function (entry) {
                 var relativeTime = entry.timepoint - startTime;
 
                 var result = convertVariablesToLists(entry);
                 result.timepoint = roundByMultiple(relativeTime, 5000);
+                result.teamSize = teamSize;
                 emit(result.timepoint, result);
             })
         }

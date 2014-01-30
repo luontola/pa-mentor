@@ -12,4 +12,15 @@
         <td data-bind="visible: percentile() >= 0, css: status"><span data-bind="text: percentile">...</span>%</td>
     </tr>
     </tbody>
+    <tfoot>
+    <tr>
+        <th>Team Size</th>
+        <td data-bind="text: pamentor.teamSize">...</td>
+        <td>
+            <a href="#" onclick="pamentor.adjustTeamSize(1); return false;">+</a>
+            /
+            <a href="#" onclick="pamentor.adjustTeamSize(-1); return false;">-</a>
+        </td>
+    </tr>
+    </tfoot>
 </table>

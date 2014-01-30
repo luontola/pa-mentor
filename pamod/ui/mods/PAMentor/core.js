@@ -26,6 +26,15 @@ var pamentor = (function () {
         pamentor.timeSincePlayStart(pamentor._timeSincePlayStart());
     };
 
+    // Game Info
+
+    // TODO: detect the team size automatically
+    pamentor.teamSize = ko.observable(1);
+    pamentor.adjustTeamSize = function (change) {
+        var teamSize = Math.max(1, pamentor.teamSize() + change);
+        pamentor.teamSize(teamSize);
+    };
+
     // Stats
 
     pamentor.stats = ko.observable({});
@@ -34,7 +43,7 @@ var pamentor = (function () {
 
     pamentor.updateStats = function () {
         var timepoint = pamentor.timeSincePlayStart();
-        var teamSize = 1; // TODO: get actual value
+        var teamSize = pamentor.teamSize();
         $.getJSON(pamentor.statsServer + '/api/percentiles/' + timepoint + '?teamSize=' + teamSize, function (stats) {
             pamentor.stats(stats);
         });

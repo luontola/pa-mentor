@@ -92,7 +92,7 @@ describe('Analytics:', function () {
             })
             .then(analytics.refresh)
             .then(function () {
-                return analytics.getPercentiles(10000)
+                return analytics.getPercentiles({ timepoint: 10000 })
             })
             .done(function (stats) {
                 assert.deepEqual([654, 688, 720, 759], stats.metalStored.values);
@@ -453,7 +453,7 @@ describe('Analytics:', function () {
         });
 
         it("Returns the stats at the specified timepoint", function (done) {
-            analytics.getPercentiles(5000).done(function (data) {
+            analytics.getPercentiles({ timepoint: 5000 }).done(function (data) {
                 assert.equal(5000, data.timepoint);
                 assert.deepEqual([2], data.stat.values);
                 done();
@@ -461,7 +461,7 @@ describe('Analytics:', function () {
         });
 
         it("Rounds the timepoint if there is no exact match", function (done) {
-            analytics.getPercentiles(5100).done(function (data) {
+            analytics.getPercentiles({ timepoint: 5100 }).done(function (data) {
                 assert.equal(5000, data.timepoint);
                 assert.deepEqual([2], data.stat.values);
                 done();
@@ -469,7 +469,7 @@ describe('Analytics:', function () {
         });
 
         it("Timepoint into future returns the last timepoint", function (done) {
-            analytics.getPercentiles(24 * 3600 * 1000).done(function (data) {
+            analytics.getPercentiles({ timepoint: 24 * 3600 * 1000 }).done(function (data) {
                 assert.equal(10000, data.timepoint);
                 assert.deepEqual([3], data.stat.values);
                 done();
@@ -477,7 +477,7 @@ describe('Analytics:', function () {
         });
 
         it("Timepoint into past returns the first timepoint", function (done) {
-            analytics.getPercentiles(-1).done(function (data) {
+            analytics.getPercentiles({ timepoint: -1 }).done(function (data) {
                 assert.equal(0, data.timepoint);
                 assert.deepEqual([1], data.stat.values);
                 done();
@@ -487,7 +487,7 @@ describe('Analytics:', function () {
         it("Gives an error if there is no data", function (done) {
             db.removeAll()
                 .then(function () {
-                    return analytics.getPercentiles(0);
+                    return analytics.getPercentiles({ timepoint: 0 });
                 })
                 .done(assert.fail, function (err) {
                     assert.ok(err instanceof Error);

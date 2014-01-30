@@ -152,8 +152,8 @@ analytics.refresh = function () {
         });
 };
 
-analytics.getPercentiles = function (timepoint) {
-    timepoint = Math.max(0, timepoint);
+analytics.getPercentiles = function (opts) {
+    var timepoint = Math.max(0, opts.timepoint);
     return db.percentiles
         .find({ 'value.timepoint': { $lte: timepoint }})
         .sort({ 'value.timepoint': -1 })

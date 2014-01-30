@@ -71,7 +71,7 @@ server.get('/api/stats', function (req, res) {
 server.get('/api/stats/:timepoint', function (req, res, next) {
     /** Shows stats at the specified timepoint */
     var timepoint = parseInt(req.params.timepoint);
-    analytics.getPercentiles(timepoint).then(function (data) {
+    analytics.getPercentiles({ timepoint: timepoint }).then(function (data) {
         res.setHeader('Content-Type', 'application/json');
         res.send(data);
     }).fail(next);

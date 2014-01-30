@@ -164,10 +164,15 @@ analytics.getPercentiles = function (opts) {
         .limit(1)
         .next()
         .then(function (doc) {
-            if (!doc) {
-                throw new Error('No data found at timepoint ' + timepoint + ' for team size ' + teamSize);
+            if (doc) {
+                return doc.value;
+            } else {
+                return {
+                    error: 'No data found at timepoint ' + timepoint + ' for team size ' + teamSize,
+                    timepoint: timepoint,
+                    teamSize: teamSize
+                };
             }
-            return doc.value;
         });
 };
 

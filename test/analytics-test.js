@@ -506,13 +506,15 @@ describe('Analytics:', function () {
             });
         });
 
-        it("Gives an error if there is no data", function (done) {
+        it("Returns an empty result if there is no data", function (done) {
             db.removeAll()
                 .then(function () {
-                    return analytics.getPercentiles({ timepoint: 0, teamSize: 1 });
+                    return analytics.getPercentiles({ timepoint: 1000, teamSize: 2 });
                 })
-                .done(assert.fail, function (err) {
-                    assert.ok(err instanceof Error);
+                .done(function (data) {
+                    assert.equal("No data found at timepoint 1000 for team size 2", data.error);
+                    assert.equal(1000, data.timepoint);
+                    assert.equal(2, data.teamSize);
                     done();
                 });
         });

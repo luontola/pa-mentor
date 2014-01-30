@@ -98,7 +98,7 @@ describe('Updater:', function () {
         });
 
         it("the database should have game statistics", function (done) {
-            analytics.getPercentiles({ timepoint: 10000 })
+            analytics.getPercentiles({ timepoint: 10000, teamSize: 1 })
                 .then(function (stats) {
                     assert.ok(stats.armyCount.values.length >= 1, "armyCount.values was empty");
                 })

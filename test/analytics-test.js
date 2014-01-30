@@ -92,7 +92,7 @@ describe('Analytics:', function () {
             })
             .then(analytics.refresh)
             .then(function () {
-                return analytics.getPercentiles({ timepoint: 10000 })
+                return analytics.getPercentiles({ timepoint: 10000, teamSize: 1 })
             })
             .done(function (stats) {
                 assert.deepEqual([654, 688, 720, 759], stats.metalStored.values);
@@ -436,11 +436,23 @@ describe('Analytics:', function () {
             var game = {
                 "gameId": 123,
                 "startTime": 10000000,
+                "teams": [
+                    { "teamId": 0, "players": [
+                        { "playerId": 1000, "playerName": "Lonely 1" }
+                    ] },
+                    { "teamId": 1, "players": [
+                        { "playerId": 2000, "playerName": "Happy 1" },
+                        { "playerId": -1, "playerName": "Anon" }
+                    ] }
+                ],
                 "playerTimeData": {
-                    "123": [
+                    "1000": [
                         {"timepoint": 10000000, "stat": 1},
                         {"timepoint": 10005000, "stat": 2},
                         {"timepoint": 10010000, "stat": 3}
+                    ],
+                    "2000": [
+                        {"timepoint": 10005000, "stat": 42}
                     ]
                 }
             };
@@ -453,15 +465,25 @@ describe('Analytics:', function () {
         });
 
         it("Returns the stats at the specified timepoint", function (done) {
-            analytics.getPercentiles({ timepoint: 5000 }).done(function (data) {
+            analytics.getPercentiles({ timepoint: 5000, teamSize: 1 }).done(function (data) {
                 assert.equal(5000, data.timepoint);
+                assert.equal(1, data.teamSize);
                 assert.deepEqual([2], data.stat.values);
                 done();
             });
         });
 
+        it("Returns the stats for the specified team size", function (done) {
+            analytics.getPercentiles({ timepoint: 5000, teamSize: 2 }).done(function (data) {
+                assert.equal(5000, data.timepoint);
+                assert.equal(2, data.teamSize);
+                assert.deepEqual([42], data.stat.values);
+                done();
+            });
+        });
+
         it("Rounds the timepoint if there is no exact match", function (done) {
-            analytics.getPercentiles({ timepoint: 5100 }).done(function (data) {
+            analytics.getPercentiles({ timepoint: 5100, teamSize: 1 }).done(function (data) {
                 assert.equal(5000, data.timepoint);
                 assert.deepEqual([2], data.stat.values);
                 done();
@@ -469,7 +491,7 @@ describe('Analytics:', function () {
         });
 
         it("Timepoint into future returns the last timepoint", function (done) {
-            analytics.getPercentiles({ timepoint: 24 * 3600 * 1000 }).done(function (data) {
+            analytics.getPercentiles({ timepoint: 24 * 3600 * 1000, teamSize: 1 }).done(function (data) {
                 assert.equal(10000, data.timepoint);
                 assert.deepEqual([3], data.stat.values);
                 done();
@@ -477,7 +499,7 @@ describe('Analytics:', function () {
         });
 
         it("Timepoint into past returns the first timepoint", function (done) {
-            analytics.getPercentiles({ timepoint: -1 }).done(function (data) {
+            analytics.getPercentiles({ timepoint: -1, teamSize: 1 }).done(function (data) {
                 assert.equal(0, data.timepoint);
                 assert.deepEqual([1], data.stat.values);
                 done();
@@ -487,7 +509,7 @@ describe('Analytics:', function () {
         it("Gives an error if there is no data", function (done) {
             db.removeAll()
                 .then(function () {
-                    return analytics.getPercentiles({ timepoint: 0 });
+                    return analytics.getPercentiles({ timepoint: 0, teamSize: 1 });
                 })
                 .done(assert.fail, function (err) {
                     assert.ok(err instanceof Error);

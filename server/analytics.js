@@ -154,8 +154,12 @@ analytics.refresh = function () {
 
 analytics.getPercentiles = function (opts) {
     var timepoint = Math.max(0, opts.timepoint);
+    var teamSize = Math.max(1, opts.teamSize);
     return db.percentiles
-        .find({ 'value.timepoint': { $lte: timepoint }})
+        .find({
+            'value.timepoint': { $lte: timepoint },
+            'value.teamSize': teamSize
+        })
         .sort({ 'value.timepoint': -1 })
         .limit(1)
         .next()

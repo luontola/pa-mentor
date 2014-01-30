@@ -158,7 +158,10 @@ analytics.getPercentiles = function (opts) {
     return db.percentiles
         .find({
             'value.timepoint': { $lte: timepoint },
-            'value.teamSize': teamSize
+            '$or': [
+                { 'value.teamSize': teamSize },
+                { 'value.teamSize': { $exists: false } } // TODO: remove me after server has updated percentiles
+            ]
         })
         .sort({ 'value.timepoint': -1 })
         .limit(1)

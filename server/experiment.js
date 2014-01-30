@@ -16,7 +16,10 @@ rest.getObject('http://www.nanodesu.info/pastats/report/get?gameId=' + gameId)
     .then(gamesDao.save)
     .then(function () {
         console.info("\nCalculating statistics...");
-        return analytics.refreshAndGet(5000 * 100);
+        return analytics.refresh();
+    })
+    .then(function () {
+        return analytics.getPercentiles(5000 * 100);
     })
     .then(function (stats) {
         console.info(JSON.stringify(stats, null, 2));

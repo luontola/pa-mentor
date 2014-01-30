@@ -4,7 +4,6 @@
 
 "use strict";
 
-var Q = require('q');
 var db = require('./db');
 
 var analytics = {};
@@ -133,7 +132,7 @@ analytics.refresh = function () {
         });
 };
 
-analytics.at = function (timepoint) {
+analytics.getPercentiles = function (timepoint) {
     timepoint = Math.max(0, timepoint);
     return db.percentiles
         .find({ 'value.timepoint': { $lte: timepoint }})
@@ -146,12 +145,6 @@ analytics.at = function (timepoint) {
             }
             return doc.value;
         });
-};
-
-analytics.refreshAndGet = function (timepoint) {
-    return analytics.refresh().then(function () {
-        return analytics.at(timepoint);
-    });
 };
 
 module.exports = analytics;

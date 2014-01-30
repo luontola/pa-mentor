@@ -9,7 +9,7 @@ var db = require('./db');
 var server = require('./server');
 var updater = require('./updater');
 
-db.upgrade()
+db.init()
     .then(server.start)
     .then(updater.start)
     .done();

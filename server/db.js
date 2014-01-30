@@ -10,18 +10,20 @@ var config = require('./config');
 
 var db = mongojs(config.dbUri, ['games', 'percentiles', 'meta']);
 
-db.games.ensureIndex({ gameId: 1 }, { unique: true }).done();
-
-db.games.ensureIndex({ startTime: 1 }).done();
-
-db.percentiles.ensureIndex({'value.timepoint': 1}, { unique: true }).done();
-
 db.removeAll = function () {
     return Q.all([
         db.games.remove(),
         db.percentiles.remove()
     ]);
 };
+
+function ensureIndexes() {
+    return Q.all([
+        db.games.ensureIndex({ gameId: 1 }, { unique: true }),
+        db.games.ensureIndex({ startTime: 1 }),
+        db.percentiles.ensureIndex({'value.timepoint': 1})
+    ]);
+}
 
 function getMeta() {
     return db.meta.findOne({ _id: 1 })
@@ -34,7 +36,7 @@ function setMeta(meta) {
     return db.meta.save(meta);
 }
 
-db.upgrade = function () {
+db.init = function () {
     return getMeta()
         .then(function (meta) {
             console.info("Database revision is %s", meta.revision);
@@ -54,7 +56,21 @@ db.upgrade = function () {
             }
             return meta;
         })
-        .then(setMeta);
+        .then(function (meta) {
+            var rev = 20140130;
+            if (meta.revision < rev) {
+                meta.revision = rev;
+                console.info("Upgrading to revision %s", rev);
+                // Grouping stats by teamSize added. Timepoints are not anymore unique.
+                return db.percentiles.dropIndex('value.timepoint_1')
+                    .then(function () {
+                        return meta;
+                    });
+            }
+            return meta;
+        })
+        .then(setMeta)
+        .then(ensureIndexes);
 };
 
 module.exports = db;

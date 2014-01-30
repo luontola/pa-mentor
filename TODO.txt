@@ -19,7 +19,7 @@ OK - save database version in database, run data migration (regeneration) on sta
 
 OK - locate the outlier games in the statistics (an army of 1393 at time 0 is unrealistic)
 
-- group games based on the number of players in the team
+OK - group games based on the number of players in the team
 
 - filter games based on whether the player was in the winning team
 

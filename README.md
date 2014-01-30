@@ -35,9 +35,8 @@ Running
 Known Issues
 ------------
 
-The statistics do not yet take into consideration that how many players are
-in a team; the comparisons are not really fair when comparing single player
-against a team of multiple players.
+Does not yet detect automatically the size of the player's team, so the
+player will need to manually adjust it by clicking +/- in the UI.
 
 
 Version History
@@ -45,7 +44,13 @@ Version History
 
 ### Upcoming
 
+- The percentiles are now based on the size of the player's team
 - Will automatically detect and use a backend running on localhost
+
+### Server Update (2014-01-30)
+
+- For users of version 0.1.0 of this mod, the percentiles are now based on
+the stats of single player teams
 
 ### Server Update (2014-01-26)
 

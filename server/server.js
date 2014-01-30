@@ -48,6 +48,14 @@ function getApiDocs() {
         .value();
 }
 
+function optional(value, defaultValue) {
+    if (typeof value === typeof defaultValue) {
+        return value;
+    } else {
+        return defaultValue;
+    }
+}
+
 var server = express();
 
 server.get('/', function (req, res) {
@@ -63,15 +71,32 @@ server.get('/api', function (req, res) {
     res.send(getApiDocs());
 });
 
+// TODO: deprecated, remove me
 server.get('/api/stats', function (req, res) {
     /** Shows stats at timepoint 0 */
     res.redirect('/api/stats/0');
 });
 
+// TODO: deprecated, remove me
 server.get('/api/stats/:timepoint', function (req, res, next) {
     /** Shows stats at the specified timepoint */
     var timepoint = parseInt(req.params.timepoint);
     analytics.getPercentiles({ timepoint: timepoint, teamSize: 1 }).then(function (data) {
+        res.setHeader('Content-Type', 'application/json');
+        res.send(data);
+    }).fail(next);
+});
+
+server.get('/api/percentiles', function (req, res) {
+    /** Shows percentiles at timepoint 0 */
+    res.redirect('/api/percentiles/0');
+});
+
+server.get('/api/percentiles/:timepoint', function (req, res, next) {
+    /** Shows percentiles at the specified timepoint. Optional 'teamSize' query parameter. */
+    var timepoint = parseInt(req.param('timepoint'));
+    var teamSize = parseInt(optional(req.param('teamSize'), '1'));
+    analytics.getPercentiles({ timepoint: timepoint, teamSize: teamSize }).then(function (data) {
         res.setHeader('Content-Type', 'application/json');
         res.send(data);
     }).fail(next);

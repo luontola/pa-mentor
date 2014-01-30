@@ -33,7 +33,9 @@ var pamentor = (function () {
     changeStatsServerIfAvailable(DEV_SERVER);
 
     pamentor.updateStats = function () {
-        $.getJSON(pamentor.statsServer + '/api/stats/' + pamentor.timeSincePlayStart(), function (stats) {
+        var timepoint = pamentor.timeSincePlayStart();
+        var teamSize = 1; // TODO: get actual value
+        $.getJSON(pamentor.statsServer + '/api/percentiles/' + timepoint + '?teamSize=' + teamSize, function (stats) {
             pamentor.stats(stats);
         });
     };

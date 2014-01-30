@@ -140,10 +140,10 @@ describe('Analytics:', function () {
                 "startTime": 1000000,
                 "teams": [
                     { "teamId": 0, "players": [
-                        { "playerId": 1000, "playerName": "Player 1" }
+                        { "playerId": 1000, "playerName": "Lonely 1" }
                     ] },
                     { "teamId": 1, "players": [
-                        { "playerId": 2000, "playerName": "Player 2" },
+                        { "playerId": 2000, "playerName": "Happy 1" },
                         { "playerId": -1, "playerName": "Anon" }
                     ] }
                 ],
@@ -218,6 +218,86 @@ describe('Analytics:', function () {
             assert.deepEqual({ timepoint: 0, teamSize: 1, stat1: [1] }, emitted[0]);
             assert.deepEqual({ timepoint: 5000, teamSize: 1, stat1: [2] }, emitted[1]);
             assert.deepEqual({ timepoint: 10000, teamSize: 1, stat1: [3] }, emitted[2]);
+        });
+
+        it("Groups the data by timepoint", function () {
+            var game = {
+                "startTime": 1000000,
+                "playerTimeData": {
+                    "6100": [
+                        {"timepoint": 1000000, "stat1": 1},
+                        {"timepoint": 1005000, "stat1": 2}
+                    ],
+                    "1203": [
+                        {"timepoint": 1000000, "stat1": 3},
+                        {"timepoint": 1005000, "stat1": 4}
+                    ]
+                }
+            };
+
+            analytics._map.apply(game);
+
+            var a1 = emit.getCall(0).args;
+            var a2 = emit.getCall(2).args;
+            assert.equal(a1[1].timepoint, 0);
+            assert.equal(a2[1].timepoint, 0);
+            assert.equal(a1[0], a2[0]);
+
+            var b1 = emit.getCall(1).args;
+            var b2 = emit.getCall(3).args;
+            assert.equal(b1[1].timepoint, 5000);
+            assert.equal(b2[1].timepoint, 5000);
+            assert.equal(b1[0], b2[0]);
+
+            assert.notEqual(a1[0], b1[0]);
+        });
+
+        it("Groups the data by teamSize", function () {
+            var game = {
+                "startTime": 1000000,
+                "teams": [
+                    { "teamId": 0, "players": [
+                        { "playerId": 1001, "playerName": "Lonely 1" }
+                    ] },
+                    { "teamId": 2, "players": [
+                        { "playerId": 1002, "playerName": "Lonely 2" }
+                    ] },
+                    { "teamId": 1, "players": [
+                        { "playerId": 2001, "playerName": "Happy 1" },
+                        { "playerId": 2002, "playerName": "Happy 2" }
+                    ] }
+                ],
+                "playerTimeData": {
+                    "1001": [
+                        {"timepoint": 1000000, "stat1": 1}
+                    ],
+                    "1002": [
+                        {"timepoint": 1000000, "stat1": 2}
+                    ],
+                    "2001": [
+                        {"timepoint": 1000000, "stat1": 3}
+                    ],
+                    "2002": [
+                        {"timepoint": 1000000, "stat1": 4}
+                    ]
+                }
+            };
+
+            analytics._map.apply(game);
+
+            var a1 = emit.getCall(0).args;
+            var a2 = emit.getCall(1).args;
+            assert.equal(a1[1].teamSize, 1);
+            assert.equal(a2[1].teamSize, 1);
+            assert.equal(a1[0], a2[0]);
+
+            var b1 = emit.getCall(2).args;
+            var b2 = emit.getCall(3).args;
+            assert.equal(b1[1].teamSize, 2);
+            assert.equal(b2[1].teamSize, 2);
+            assert.equal(b1[0], b2[0]);
+
+            assert.notEqual(a1[0], b1[0]);
         });
     });
 

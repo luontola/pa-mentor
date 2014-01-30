@@ -56,7 +56,7 @@ analytics._map = function () {
                 var result = convertVariablesToLists(entry);
                 result.timepoint = roundByMultiple(relativeTime, 5000);
                 result.teamSize = teamSize;
-                emit(result.timepoint, result);
+                emit(result.timepoint + '/' + result.teamSize, result);
             })
         }
     }
@@ -116,10 +116,10 @@ analytics._finalize = function (id, entry) {
                 i--;
             }
         }
-        for (var i = 0; i < values.length - 1; i++) {
-            if (percentiles[i] === percentiles[i + 1]) {
-                removeIndex(i);
-                i--;
+        for (var j = 0; j < values.length - 1; j++) {
+            if (percentiles[j] === percentiles[j + 1]) {
+                removeIndex(j);
+                j--;
             }
         }
     }

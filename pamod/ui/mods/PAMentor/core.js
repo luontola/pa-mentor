@@ -28,6 +28,12 @@ var pamentor = (function () {
 
     // Game Info
 
+    // TODO: use these to find out the team size (be extra defensive, default to 1 on any problem)
+    var teamIndex = localStorage['info.nanodesu.pastats.team_index'];
+    var teams = localStorage['info.nanodesu.pastats.teams'];
+    console.log('teamIndex', teamIndex);
+    console.log('teams', teams);
+
     // TODO: detect the team size automatically
     pamentor.teamSize = ko.observable(1);
     pamentor.adjustTeamSize = function (change) {

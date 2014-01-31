@@ -36,39 +36,34 @@ function setMeta(meta) {
     return db.meta.save(meta);
 }
 
+function upgrade(rev, fn) {
+    return function (meta) {
+        if (meta.revision < rev) {
+            meta.revision = rev;
+            console.info("Upgrading to revision %s", rev);
+            return Q.fcall(fn).then(function () {
+                return meta;
+            });
+        }
+        return meta;
+    }
+}
+
 db.init = function () {
     return getMeta()
         .then(function (meta) {
             console.info("Database revision is %s", meta.revision);
             return meta;
         })
-        .then(function (meta) {
-            var rev = 20140126;
-            if (meta.revision < rev) {
-                meta.revision = rev;
-                console.info("Upgrading to revision %s", rev);
-                // Updater logic was changed. Better re-download everything
-                // to make sure that no games are missed.
-                return db.games.remove({})
-                    .then(function () {
-                        return meta;
-                    });
-            }
-            return meta;
-        })
-        .then(function (meta) {
-            var rev = 20140130;
-            if (meta.revision < rev) {
-                meta.revision = rev;
-                console.info("Upgrading to revision %s", rev);
-                // Grouping stats by teamSize added. Timepoints are not anymore unique.
-                return db.percentiles.dropIndex('value.timepoint_1')
-                    .then(function () {
-                        return meta;
-                    });
-            }
-            return meta;
-        })
+        .then(upgrade(20140126, function () {
+            // Updater logic was changed. Better re-download everything
+            // to make sure that no games are missed.
+            return db.games.remove({});
+        }))
+        .then(upgrade(20140130, function () {
+            // Grouping stats by teamSize added. Timepoints are not anymore unique.
+            return db.percentiles.dropIndex('value.timepoint_1');
+        }))
         .then(setMeta)
         .then(ensureIndexes);
 };

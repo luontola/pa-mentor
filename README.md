@@ -42,7 +42,7 @@ player will need to manually adjust it by clicking +/- in the UI.
 Version History
 ---------------
 
-### Upcoming
+### PA Mentor 0.2.0 (2014-01-31)
 
 - The percentiles are now based on the size of the player's team
 - Will automatically detect and use a backend running on localhost

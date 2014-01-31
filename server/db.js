@@ -4,6 +4,7 @@
 
 'use strict';
 
+var _ = require('underscore');
 var Q = require('q');
 var mongojs = require('./q-mongojs');
 var config = require('./config');
@@ -49,6 +50,21 @@ function upgrade(rev, fn) {
     }
 }
 
+function dropIndexes(collection) {
+    return collection.indexes()
+        .then(function (indexes) {
+            return Q.all(_.chain(indexes)
+                .pluck('name')
+                .filter(function (name) {
+                    return name !== '_id_';
+                })
+                .map(function (name) {
+                    return collection.dropIndex(name);
+                })
+                .value());
+        });
+}
+
 db.init = function () {
     return getMeta()
         .then(function (meta) {
@@ -62,11 +78,11 @@ db.init = function () {
         }))
         .then(upgrade(20140130, function () {
             // Grouping stats by teamSize added. Timepoints are not anymore unique.
-            return db.percentiles.dropIndex('value.timepoint_1');
+            return dropIndexes(db.percentiles);
         }))
         .then(upgrade(20140131, function () {
             // Changed to a compound index.
-            return db.percentiles.dropIndex('value.timepoint_1');
+            return dropIndexes(db.percentiles);
         }))
         .then(setMeta)
         .then(ensureIndexes);

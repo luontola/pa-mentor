@@ -1,8 +1,8 @@
 
 OK - print app version on startup
+OK - figure out should 'value.timepoint' and 'value.teamSize' both be indexed, and should it be same or different indexes
 - API for forcing an update
 - if update triggered while one is running, return the existing promise
-- figure out should 'value.timepoint' and 'value.teamSize' both be indexed, and should it be same or different indexes
 
 - filter games based on whether the player was in the winning team
 

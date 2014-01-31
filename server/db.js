@@ -21,7 +21,7 @@ function ensureIndexes() {
     return Q.all([
         db.games.ensureIndex({ gameId: 1 }, { unique: true }),
         db.games.ensureIndex({ startTime: 1 }),
-        db.percentiles.ensureIndex({'value.timepoint': 1}) // TODO: index for also team size? same or separate index?
+        db.percentiles.ensureIndex({ 'value.teamSize': 1, 'value.timepoint': 1 }, { unique: true })
     ]);
 }
 
@@ -62,6 +62,10 @@ db.init = function () {
         }))
         .then(upgrade(20140130, function () {
             // Grouping stats by teamSize added. Timepoints are not anymore unique.
+            return db.percentiles.dropIndex('value.timepoint_1');
+        }))
+        .then(upgrade(20140131, function () {
+            // Changed to a compound index.
             return db.percentiles.dropIndex('value.timepoint_1');
         }))
         .then(setMeta)

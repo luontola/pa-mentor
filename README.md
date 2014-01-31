@@ -42,6 +42,10 @@ player will need to manually adjust it by clicking +/- in the UI.
 Version History
 ---------------
 
+### Server Update (2014-01-31)
+
+- Print application version on startup
+
 ### PA Mentor 0.2.0 (2014-01-31)
 
 - The percentiles are now based on the size of the player's team

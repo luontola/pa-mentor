@@ -12,10 +12,15 @@ var _ = require('underscore');
 var analytics = require('./analytics');
 var config = require('./config');
 
+var version;
 function getVersion() {
+    if (version) {
+        return Q(version);
+    }
     return Q.ninvoke(child_process, 'exec', 'git describe --dirty --always', { cwd: __dirname, timeout: 10000 })
         .spread(function (stdout, stderr) {
-            return stdout;
+            version = stdout.trim();
+            return version;
         })
         .fail(function (err) {
             console.warn("Failed to get version: " + err);
@@ -104,7 +109,11 @@ server.get('/api/percentiles/:timepoint', function (req, res, next) {
 
 server.start = function () {
     var port = config.port;
-    return Q.ninvoke(server, 'listen', port)
+    return getVersion()
+        .then(function (version) {
+            console.info("Application version is %s", version);
+            return Q.ninvoke(server, 'listen', port)
+        })
         .then(function () {
             console.info("Server listening on port %s", port);
             var env = server.get('env');

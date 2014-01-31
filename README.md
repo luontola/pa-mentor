@@ -6,7 +6,7 @@ PA Mentor
 in-game stats compare to other players. The statistics are based on the
 data from [PA Stats](http://www.nanodesu.info/pastats/).
 
-![Screenshot](http://i.imgur.com/jIlv8db.png)
+![Screenshot](http://i.imgur.com/Mam85Cd.png)
 
 
 Building

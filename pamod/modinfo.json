@@ -2,7 +2,7 @@
     "context": "client",
     "identifier": "net.orfjackal.pa-mentor",
     "display_name": "PA Mentor",
-    "description": "Shows how your in-game stats compared to other players",
+    "description": "Shows how your in-game stats compare to other players, to help in learning how fast to expand",
     "author": "ORFJackal",
     "version": "0.2.1-SNAPSHOT",
     "build": "59607",

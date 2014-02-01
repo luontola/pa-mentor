@@ -3,8 +3,9 @@ PA Mentor
 =========
 
 [Planetary Annihilation](http://www.uberent.com/pa/) mod showing how your
-in-game stats compare to other players. The statistics are based on the
-data from [PA Stats](http://www.nanodesu.info/pastats/).
+in-game stats compare to other players, to help in learning how fast and
+how much to expand your economy and production. The statistics are based on
+the data collected by [PA Stats](http://www.nanodesu.info/pastats/).
 
 ![Screenshot](http://i.imgur.com/Mam85Cd.png)
 

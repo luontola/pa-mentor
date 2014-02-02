@@ -36,8 +36,8 @@ Running
 Known Issues
 ------------
 
-Does not yet detect automatically the size of the player's team, so the
-player will need to manually adjust it by clicking +/- in the UI.
+Detecting the team size works automatically if you have PA Stats installed.
+Otherwise you'll need to adjust it manually by clicking +/- in the UI.
 
 
 Version History
@@ -45,7 +45,7 @@ Version History
 
 ### PA Mentor 0.3.0 (2014-02-02)
 
-- Detect the team size automatically, if PA Stats is installed
+- Detect the team size automatically if PA Stats is installed
 
 ### Server Update (2014-01-31)
 

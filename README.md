@@ -43,9 +43,14 @@ player will need to manually adjust it by clicking +/- in the UI.
 Version History
 ---------------
 
+### Upcoming
+
+- Detect the team size automatically, if PA Stats is installed
+
 ### Server Update (2014-01-31)
 
 - Print application version on startup
+- Performance optimizations
 
 ### PA Mentor 0.2.0 (2014-01-31)
 

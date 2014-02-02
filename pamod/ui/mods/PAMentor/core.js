@@ -28,18 +28,31 @@ var pamentor = (function () {
 
     // Game Info
 
-    // TODO: use these to find out the team size (be extra defensive, default to 1 on any problem)
-    var teamIndex = localStorage['info.nanodesu.pastats.team_index'];
-    var teams = localStorage['info.nanodesu.pastats.teams'];
-    console.log('teamIndex', teamIndex);
-    console.log('teams', teams);
-
-    // TODO: detect the team size automatically
-    pamentor.teamSize = ko.observable(1);
+    pamentor.teamSize = ko.observable(getTeamSize());
     pamentor.adjustTeamSize = function (change) {
         var teamSize = Math.max(1, pamentor.teamSize() + change);
         pamentor.teamSize(teamSize);
     };
+
+    function getTeamSize() {
+        var teamIndexStr = localStorage['info.nanodesu.pastats.team_index'];
+        var teamsStr = localStorage['info.nanodesu.pastats.teams'];
+        try {
+            if (teamIndexStr && teamsStr) {
+                var teamIndex = parseInt(teamIndexStr);
+                var teams = JSON.parse(teamsStr);
+                for (var i = 0; i < teams.length; i++) {
+                    var team = teams[i];
+                    if (team.index === teamIndex) {
+                        return team.players.length;
+                    }
+                }
+            }
+        } catch (e) {
+            console.log("Unknown failure; maybe PA Stats became incompatible with PA Mentor?", e.stack ? e.stack : e);
+        }
+        return 1; // default team size if we can't get it from PA Stats
+    }
 
     // Stats
 

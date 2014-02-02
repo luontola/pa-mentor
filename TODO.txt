@@ -4,7 +4,7 @@ OK - figure out should 'value.timepoint' and 'value.teamSize' both be indexed, a
 
 OK - detect team size automatically; use PA Stats variables from local storage, default to 1 on failure to do so
 
-- icon on PAMM
+OK - icon on PAMM
 
 - API for forcing an update
 - if update triggered while one is running, return the existing promise

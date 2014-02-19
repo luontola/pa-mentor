@@ -43,6 +43,10 @@ Otherwise you'll need to adjust it manually by clicking +/- in the UI.
 Version History
 ---------------
 
+### Upcoming
+
+- Updated to work with PA BETA v.61250
+
 ### PA Mentor 0.3.0 (2014-02-02)
 
 - Detect the team size automatically if PA Stats is installed

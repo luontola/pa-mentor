@@ -12,10 +12,20 @@ $(function () {
         });
     }
 
+    function hookFunction(obj, fnName, hookFn) {
+        var realFn = obj[fnName];
+        obj[fnName] = function () {
+            realFn.apply(obj, arguments);
+            hookFn.apply(obj, arguments);
+        };
+    }
+
     model.pamentor = pamentor;
     setInterval(pamentor.updateClock, 1000);
     setInterval(pamentor.updateStats, 5000);
 
     createFloatingFrame('pa_mentor_frame', 100, 100, {'offset': 'leftCenter', 'left': 0});
     loadTemplate($('#pa_mentor_frame_content'), 'coui://ui/mods/PAMentor/live_game/pa_mentor.html');
+
+    hookFunction(handlers, 'army', pamentor.dataSources.army);
 });

@@ -67,13 +67,33 @@ var pamentor = (function () {
             pamentor.stats(stats);
         });
     };
-    pamentor.variables = ko.observableArray();
 
-    initVariable('Unit Count', 'armyCount', model.armySize);
-    initVariable('Metal Income', 'metalIncome', model.metalGain);
-    initVariable('Metal Spending', 'metalSpending', model.metalLoss);
-    initVariable('Energy Income', 'energyIncome', model.energyGain);
-    initVariable('Energy Spending', 'energySpending', model.energyLoss);
+    var army = ko.observable(null); // to be filled by the payload of the 'army' event handler
+    pamentor.dataSources = {
+        army: army,
+        armyCount: ko.computed(mkGetIf(army, function (army) {
+            return army.army_size;
+        })),
+        metalIncome: ko.computed(mkGetIf(army, function (army) {
+            return army.metal.production;
+        })),
+        metalSpending: ko.computed(mkGetIf(army, function (army) {
+            return army.metal.demand;
+        })),
+        energyIncome: ko.computed(mkGetIf(army, function (army) {
+            return army.energy.production;
+        })),
+        energySpending: ko.computed(mkGetIf(army, function (army) {
+            return army.energy.demand;
+        }))
+    };
+
+    pamentor.variables = ko.observableArray();
+    initVariable('Unit Count', 'armyCount', pamentor.dataSources.armyCount);
+    initVariable('Metal Income', 'metalIncome', pamentor.dataSources.metalIncome);
+    initVariable('Metal Spending', 'metalSpending', pamentor.dataSources.metalSpending);
+    initVariable('Energy Income', 'energyIncome', pamentor.dataSources.energyIncome);
+    initVariable('Energy Spending', 'energySpending', pamentor.dataSources.energySpending);
 
     function changeStatsServerIfAvailable(newUrl) {
         $.get(newUrl)
@@ -88,6 +108,13 @@ var pamentor = (function () {
             .fail(function () {
                 console.log("%s was unresponsive, so continuing to use %s for PA Mentor data", newUrl, pamentor.statsServer);
             })
+    }
+
+    function mkGetIf(srcFn, extractorFn) {
+        return function () {
+            var value = srcFn();
+            return value && extractorFn(value);
+        };
     }
 
     function findPercentile(value, stats) {

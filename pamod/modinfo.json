@@ -4,9 +4,9 @@
     "display_name": "PA Mentor",
     "description": "Shows how your in-game stats compare to other players, to help in learning how fast to expand",
     "author": "ORFJackal",
-    "version": "0.3.1-SNAPSHOT",
-    "build": "59607",
-    "date": "2014/02/02",
+    "version": "0.3.1",
+    "build": "61250",
+    "date": "2014/02/19",
     "forum": "https://forums.uberent.com/threads/rel-pa-mentor.55399/",
     "icon": "http://pamods.github.io/icons/PAMentor.png",
     "category": [

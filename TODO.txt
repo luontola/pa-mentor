@@ -7,3 +7,5 @@
 - improve Mocha to support asynchronous tests that return a promise instead of using the callback
 
 - use DI for stateful modules, then mock them in tests where applicable
+
+- parameterize analytics based on PA build?

@@ -76,22 +76,6 @@ server.get('/api', function (req, res) {
     res.send(getApiDocs());
 });
 
-// TODO: deprecated, remove me
-server.get('/api/stats', function (req, res) {
-    /** Shows stats at timepoint 0 */
-    res.redirect('/api/stats/0');
-});
-
-// TODO: deprecated, remove me
-server.get('/api/stats/:timepoint', function (req, res, next) {
-    /** Shows stats at the specified timepoint */
-    var timepoint = parseInt(req.params.timepoint);
-    analytics.getPercentiles({ timepoint: timepoint, teamSize: 1 }).then(function (data) {
-        res.setHeader('Content-Type', 'application/json');
-        res.send(data);
-    }).fail(next);
-});
-
 server.get('/api/percentiles', function (req, res) {
     /** Shows percentiles at timepoint 0 */
     res.redirect('/api/percentiles/0');

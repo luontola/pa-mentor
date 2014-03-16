@@ -4,13 +4,7 @@
 
 'use strict';
 
-$(function () {
-
-    function loadTemplate(element, url) {
-        element.load(url, function () {
-            ko.applyBindings(model, element.get(0));
-        });
-    }
+(function () {
 
     function hookFunction(obj, fnName, hookFn) {
         var realFn = obj[fnName];
@@ -25,7 +19,8 @@ $(function () {
     setInterval(pamentor.updateStats, 5000);
 
     createFloatingFrame('pa_mentor_frame', 100, 100, {'offset': 'leftCenter', 'left': 0});
-    loadTemplate($('#pa_mentor_frame_content'), 'coui://ui/mods/PAMentor/live_game/pa_mentor.html');
+    $('#pa_mentor_frame').attr('data-bind', 'visible: !model.isSpectator() && !model.showLanding()');
+    $('#pa_mentor_frame_content').append(loadHtml('coui://ui/mods/PAMentor/live_game/pa_mentor.html'));
 
     hookFunction(handlers, 'army', pamentor.dataSources.army);
-});
+})();

@@ -43,6 +43,10 @@ Otherwise you'll need to adjust it manually by clicking +/- in the UI.
 Version History
 ---------------
 
+### Upcoming
+
+- The UI frame is not anymore draggable when it's not visible
+
 ### PA Mentor 0.4.1 (2014-03-16)
 
 - Hide when selecting the landing spot

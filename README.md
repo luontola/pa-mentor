@@ -43,6 +43,10 @@ Otherwise you'll need to adjust it manually by clicking +/- in the UI.
 Version History
 ---------------
 
+### Upcoming
+
+- Hide when spectating
+
 ### PA Mentor 0.3.1 (2014-02-19)
 
 - Updated to work with PA BETA v.61250

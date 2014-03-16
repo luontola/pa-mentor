@@ -67,7 +67,7 @@ describe('Updater:', function () {
     });
 
     describeSlow("After updating", function () {
-        this.timeout(10 * 1000);
+        this.timeout(30 * 1000);
         var oldGame = { gameId: 42, startTime: 100 };
         before(function (done) {
             var HOUR = 60 * 60 * 1000;

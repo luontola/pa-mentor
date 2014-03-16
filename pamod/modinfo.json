@@ -15,11 +15,13 @@
     ],
     "id": "PAMentor",
     "priority": 100,
-    "live_game": [
-        "coui://ui/mods/PAMentor/core.js",
-        "coui://ui/mods/PAMentor/live_game/pa_mentor.css",
-        "coui://ui/mods/PAMentor/live_game/init.js"
-    ],
+    "scenes": {
+        "live_game": [
+            "coui://ui/mods/PAMentor/core.js",
+            "coui://ui/mods/PAMentor/live_game/pa_mentor.css",
+            "coui://ui/mods/PAMentor/live_game/init.js"
+        ]
+    },
     "requires": [
         "rFloatFrame"
     ],

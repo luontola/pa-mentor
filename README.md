@@ -43,7 +43,7 @@ Otherwise you'll need to adjust it manually by clicking +/- in the UI.
 Version History
 ---------------
 
-### Upcoming
+### PA Mentor 0.4.2 (2014-03-17)
 
 - The UI frame is not anymore draggable when it's not visible
 

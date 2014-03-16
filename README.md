@@ -43,6 +43,10 @@ Otherwise you'll need to adjust it manually by clicking +/- in the UI.
 Version History
 ---------------
 
+### Upcoming
+
+- Hide when selecting the landing spot
+
 ### PA Mentor 0.4.0 (2014-03-16)
 
 - Hide when spectating

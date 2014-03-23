@@ -37,7 +37,7 @@ describe('Updater:', function () {
     });
 
     it("Converting a chunk to a service URL", function () {
-        assert.equal('http://ns393951.ip-176-31-115.eu/report/winners?start=123&duration=5',
+        assert.equal('http://pastats.com/report/winners?start=123&duration=5',
             updater._chunkToUrl({start: 123111, duration: 5111}));
     });
 

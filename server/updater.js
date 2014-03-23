@@ -52,7 +52,7 @@ updater.update = function () {
         console.info("Fetching %s games: %s", games.length, _(games).pluck('gameId'));
 
         return Q.all(_(games).map(function (game) {
-            return rest.getObject('http://www.nanodesu.info/pastats/report/get?gameId=' + game.gameId)
+            return rest.getObject('http://ns393951.ip-176-31-115.eu/report/get?gameId=' + game.gameId)
                 .then(function (details) {
                     var fullGame = updater._mergeObjects(game, details);
                     gamesDao.validate(fullGame);
@@ -148,7 +148,7 @@ function millisToSeconds(millis) {
 updater._chunkToUrl = function (chunk) {
     var start = millisToSeconds(chunk.start);
     var duration = millisToSeconds(chunk.duration);
-    return 'http://www.nanodesu.info/pastats/report/winners?start=' + start + '&duration=' + duration;
+    return 'http://ns393951.ip-176-31-115.eu/report/winners?start=' + start + '&duration=' + duration;
 };
 
 updater._mergeObjects = function (a, b) {

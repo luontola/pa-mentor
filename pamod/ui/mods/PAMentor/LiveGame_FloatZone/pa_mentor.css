@@ -1,25 +1,26 @@
 #pa_mentor_frame_content {
     white-space: nowrap;
-    font-family: 'DINPRO-BOLD';
+    font-family: 'Sansation Regular TTF';
     color: white;
     text-shadow: 0 2px 2px #000;
 }
 
 #pa_mentor_frame_content thead th {
     text-align: center;
-    font-size: .75em;
+    font-size: 13px;
 }
 
 #pa_mentor_frame_content th {
     padding-left: 4px;
     text-align: left;
-    font-size: .60em;
+    font-size: 11px;
 }
 
 #pa_mentor_frame_content td {
     padding-left: 4px;
     text-align: right;
-    font-size: .75em;
+    font-family: 'Trebuchet MS';
+    font-size: 13px;
 }
 
 #pa_mentor_frame_content .good {

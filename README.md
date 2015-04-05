@@ -47,6 +47,7 @@ Version History
 ### Upcoming
 
 - Updated to work with PA v.79600
+- Larger fonts
 
 ### PA Mentor 0.4.2 (2014-03-17)
 

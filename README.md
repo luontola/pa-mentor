@@ -23,6 +23,7 @@ Downloading dependencies:
 
 Running tests:
 
+    mongod &
     npm test
     npm run-script autotest
 
@@ -42,6 +43,10 @@ Otherwise you'll need to adjust it manually by clicking +/- in the UI.
 
 Version History
 ---------------
+
+### Upcoming
+
+- Updated to work with PA v.79600
 
 ### PA Mentor 0.4.2 (2014-03-17)
 

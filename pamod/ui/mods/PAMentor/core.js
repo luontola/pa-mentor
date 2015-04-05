@@ -1,4 +1,4 @@
-// Copyright © 2013-2014 Esko Luontola <www.orfjackal.net>
+// Copyright © 2013-2015 Esko Luontola <www.orfjackal.net>
 // This software is released under the Apache License 2.0.
 // The license text is at http://www.apache.org/licenses/LICENSE-2.0
 
@@ -9,22 +9,10 @@ var pamentor = (function () {
     var PROD_SERVER = 'http://pa-mentor.orfjackal.net';
     var DEV_SERVER = 'http://127.0.0.1:8080';
 
-    // Time
-
     var pamentor = {};
-    pamentor.timesyncWallTime = ko.observable(0);
-    pamentor.timesyncGameTime = ko.computed(function () {
-        pamentor.timesyncWallTime(Date.now());
-        return Math.round(model.currentTimeInSeconds() * 1000);
+    pamentor.isVisible = ko.computed(function () {
+        return !model.isSpectator() && !model.showLanding();
     });
-    pamentor.timeSincePlayStart = ko.observable(0);
-    pamentor._timeSincePlayStart = function () {
-        var diff = Date.now() - pamentor.timesyncWallTime();
-        return diff + pamentor.timesyncGameTime();
-    };
-    pamentor.updateClock = function () {
-        pamentor.timeSincePlayStart(pamentor._timeSincePlayStart());
-    };
 
     // Game Info
 
@@ -70,6 +58,7 @@ var pamentor = (function () {
 
     var army = ko.observable(null); // to be filled by the payload of the 'army' event handler
     pamentor.dataSources = {
+        time: ko.observable({}),
         army: army,
         armyCount: ko.computed(mkGetIf(army, function (army) {
             return army.army_size;
@@ -88,12 +77,32 @@ var pamentor = (function () {
         }))
     };
 
+    pamentor.timeSincePlayStart = ko.computed(function () {
+        var seconds = pamentor.dataSources.time().end_time || 0;
+        return seconds * 1000;
+    });
+
     pamentor.variables = ko.observableArray();
     initVariable('Unit Count', 'armyCount', pamentor.dataSources.armyCount);
     initVariable('Metal Income', 'metalIncome', pamentor.dataSources.metalIncome);
     initVariable('Metal Spending', 'metalSpending', pamentor.dataSources.metalSpending);
     initVariable('Energy Income', 'energyIncome', pamentor.dataSources.energyIncome);
     initVariable('Energy Spending', 'energySpending', pamentor.dataSources.energySpending);
+
+    pamentor.state = ko.computed(function () {
+        return JSON.stringify({
+            visible: pamentor.isVisible(),
+            teamSize: pamentor.teamSize(),
+            variables: pamentor.variables().map(function (variable) {
+                return {
+                    label: variable.label,
+                    value: variable.value(),
+                    percentile: variable.percentile(),
+                    status: variable.status()
+                }
+            })
+        });
+    });
 
     function changeStatsServerIfAvailable(newUrl) {
         $.get(newUrl)

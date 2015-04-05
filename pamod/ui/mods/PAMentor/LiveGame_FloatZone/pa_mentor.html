@@ -1,0 +1,26 @@
+<!-- PA MENTOR -->
+<table>
+    <thead>
+    <tr>
+        <th>PA Mentor</th>
+    </tr>
+    </thead>
+    <tbody data-bind="foreach: pamentor.state().variables">
+    <tr>
+        <th data-bind="text: label">...</th>
+        <td data-bind="text: value">...</td>
+        <td data-bind="visible: percentile >= 0, css: status"><span data-bind="text: percentile">...</span>%</td>
+    </tr>
+    </tbody>
+    <tfoot>
+    <tr>
+        <th>Team Size</th>
+        <td data-bind="text: pamentor.state().teamSize">...</td>
+        <td>
+            <a href="#" onclick="model.pamentor.adjustTeamSize(1); return false;">+</a>
+            /
+            <a href="#" onclick="model.pamentor.adjustTeamSize(-1); return false;">-</a>
+        </td>
+    </tr>
+    </tfoot>
+</table>

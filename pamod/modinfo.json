@@ -1,29 +1,32 @@
 {
-    "context": "client",
-    "identifier": "net.orfjackal.pa-mentor",
-    "display_name": "PA Mentor",
-    "description": "Shows how your in-game stats compare to other players, to help in learning how fast to expand",
-    "author": "ORFJackal",
-    "version": "0.4.3-SNAPSHOT",
-    "build": "62857",
-    "date": "2014/03/17",
-    "forum": "https://forums.uberent.com/threads/rel-pa-mentor.55399/",
-    "icon": "http://pamods.github.io/icons/PAMentor.png",
-    "category": [
-        "in-game",
-        "ui"
+  "context": "client",
+  "identifier": "net.orfjackal.pa-mentor",
+  "display_name": "PA Mentor",
+  "description": "Shows how your in-game stats compare to other players, to help in learning how fast to expand",
+  "author": "ORFJackal",
+  "version": "0.4.3-SNAPSHOT",
+  "build": "62857",
+  "date": "2014/03/17",
+  "forum": "https://forums.uberent.com/threads/rel-pa-mentor.55399/",
+  "icon": "http://pamods.github.io/icons/PAMentor.png",
+  "category": [
+    "in-game",
+    "ui"
+  ],
+  "id": "PAMentor",
+  "priority": 100,
+  "scenes": {
+    "live_game": [
+      "coui://ui/mods/PAMentor/core.js",
+      "coui://ui/mods/PAMentor/live_game/init.js"
     ],
-    "id": "PAMentor",
-    "priority": 100,
-    "scenes": {
-        "live_game": [
-            "coui://ui/mods/PAMentor/core.js",
-            "coui://ui/mods/PAMentor/live_game/pa_mentor.css",
-            "coui://ui/mods/PAMentor/live_game/init.js"
-        ]
-    },
-    "requires": [
-        "rFloatFrame"
-    ],
-    "enabled": true
+    "LiveGame_FloatZone": [
+      "coui://ui/mods/PAMentor/LiveGame_FloatZone/pa_mentor.css",
+      "coui://ui/mods/PAMentor/LiveGame_FloatZone/init.js"
+    ]
+  },
+  "enabled": true,
+  "dependencies": [
+    "com.pa.raevn.rfloatframe"
+  ]
 }

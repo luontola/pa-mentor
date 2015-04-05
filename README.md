@@ -44,7 +44,7 @@ Otherwise you'll need to adjust it manually by clicking +/- in the UI.
 Version History
 ---------------
 
-### Upcoming
+### PA Mentor 0.4.3 (2015-04-05)
 
 - Updated to work with PA v.79600
 - Larger fonts

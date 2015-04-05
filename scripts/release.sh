@@ -36,7 +36,7 @@ function update-json() {
 function set-project-version() {
     local file="pamod/modinfo.json"
     local version="$1"
-    local build=`cat "$PA_HOME/version.txt" | tr -d ' '`
+    local build=`cat "$PA_HOME/version.txt" | tr -d ' \r\n'`
     local date=`date '+%Y/%m/%d'`
     update-json "version" "$version" "$file"
     update-json "build" "$build" "$file"

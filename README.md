@@ -9,6 +9,10 @@ the data collected by [PA Stats](http://pastats.com/).
 
 ![Screenshot](http://repo.orfjackal.net/pa-mods/PAMentor_v0.4.3.png)
 
+You may download this mod using [PA Mod Manager][PAMM].
+
+[PAMM]: https://forums.uberent.com/threads/rel-pa-mod-manager-cross-platform.59992/
+
 
 Building
 --------

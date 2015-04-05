@@ -7,7 +7,7 @@ in-game stats compare to other players, to help in learning how fast and
 how much to expand your economy and production. The statistics are based on
 the data collected by [PA Stats](http://pastats.com/).
 
-![Screenshot](http://i.imgur.com/Mam85Cd.png)
+![Screenshot](http://repo.orfjackal.net/pa-mods/PAMentor_v0.4.3.png)
 
 
 Building

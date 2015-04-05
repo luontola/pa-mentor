@@ -13,7 +13,6 @@
     "in-game",
     "ui"
   ],
-  "id": "PAMentor",
   "priority": 100,
   "scenes": {
     "live_game": [
@@ -25,7 +24,6 @@
       "coui://ui/mods/PAMentor/LiveGame_FloatZone/init.js"
     ]
   },
-  "enabled": true,
   "dependencies": [
     "com.pa.raevn.rfloatframe"
   ]

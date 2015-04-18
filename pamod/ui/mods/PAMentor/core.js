@@ -78,6 +78,8 @@ var pamentor = (function () {
     };
 
     pamentor.timeSincePlayStart = ko.computed(function () {
+        // TODO: this should probably be current_time instead of end_time, so that it would be useful during chrono cam
+        // TODO: we may need caching the stats for chrono cam, or else the percentages will update very slowly
         var seconds = pamentor.dataSources.time().end_time || 0;
         return seconds * 1000;
     });
